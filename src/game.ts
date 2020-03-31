@@ -17,8 +17,6 @@ let dead = false;
 let HIT_POINTS = 5;
 let PLAYER_HP = 10;
 
-
-
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
   resources.models.peasant,
@@ -38,17 +36,16 @@ oldmanrivers.addComponent(
 );
 
 const tree_Dead_04 = new Entity();
-    const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
-    tree_Dead_04.addComponentOrReplace(gltfShape_4);
-    const transform_5 = new Transform({
-      position: new Vector3(10.5, 0, 12.51),
-      rotation: new Quaternion(0, 0, 0, 1),
-      scale: new Vector3(1, 1, 1)
-    });
-    tree_Dead_04.addComponentOrReplace(transform_5);
-    engine.addEntity(tree_Dead_04);
-    tree_Dead_04.addComponent(new AudioSource(resources.sounds.lava))
-
+const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
+tree_Dead_04.addComponentOrReplace(gltfShape_4);
+const transform_5 = new Transform({
+  position: new Vector3(10.5, 0, 12.51),
+  rotation: new Quaternion(0, 0, 0, 1),
+  scale: new Vector3(1, 1, 1)
+});
+tree_Dead_04.addComponentOrReplace(transform_5);
+engine.addEntity(tree_Dead_04);
+tree_Dead_04.addComponent(new AudioSource(resources.sounds.lava));
 
 // //model stuff
 const point1 = new Vector3(12, 0, 5);
@@ -83,8 +80,8 @@ let oldmanriversAnimator = new Animator();
 oldmanrivers.addComponent(oldmanriversAnimator);
 
 //Add walk animation
-const walkClip = new AnimationState("walk");
-oldmanriversAnimator.addClip(walkClip);
+const riversWalkClip = new AnimationState("walk");
+oldmanriversAnimator.addClip(riversWalkClip);
 const turnRClip = new AnimationState("turnLeft");
 turnRClip.looping = false;
 oldmanriversAnimator.addClip(turnRClip);
@@ -100,15 +97,15 @@ oldmanrivers.addComponent(new LerpData());
 dialog.onPoorChoiceMade = () => {
   log("In on Poor choice made");
   engine.removeEntity(oldmanrivers);
-  tree_Dead_04.getComponent(AudioSource).playOnce()
+  tree_Dead_04.getComponent(AudioSource).playOnce();
 
   const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);
   let fighterAnimator = new Animator();
   brute.addComponent(fighterAnimator);
 
   //Add walk animation
-  const walkClip = new AnimationState("walk");
-  fighterAnimator.addClip(walkClip);
+  const bruteWalkClip = new AnimationState("walk");
+  fighterAnimator.addClip(bruteWalkClip);
   const turnRClip = new AnimationState("turnRight");
   turnRClip.looping = false;
   fighterAnimator.addClip(turnRClip);
@@ -120,14 +117,13 @@ dialog.onPoorChoiceMade = () => {
   fighterAnimator.addClip(deathFromFront);
   const taunt = new AnimationState("taunt");
   fighterAnimator.addClip(taunt);
-  
 
   class BruteWalk {
     update(dt: number) {
       if (!brute.hasComponent(TimeOut) && !spinAttack.playing && !dead) {
         let transform = brute.getComponent(Transform);
         let path = brute.getComponent(LerpData);
-        walkClip.playing = true;
+        bruteWalkClip.playing = true;
         turnRClip.playing = false;
         if (path.fraction < 1) {
           path.fraction += dt / 12;
@@ -144,7 +140,7 @@ dialog.onPoorChoiceMade = () => {
           }
           path.fraction = 0;
           transform.lookAt(path.array[path.target]);
-          walkClip.pause();
+          bruteWalkClip.pause();
           turnRClip.play();
           turnRClip.looping = false;
           brute.addComponent(new TimeOut(TURN_TIME));
@@ -164,7 +160,7 @@ dialog.onPoorChoiceMade = () => {
             spinAttack.reset();
             spinAttack.play();
             spinAttack.playing = true;
-            walkClip.playing = false;
+            bruteWalkClip.playing = false;
             turnRClip.playing = false;
             hitInFace.playing = false;
             PLAYER_HP--;
@@ -182,10 +178,10 @@ dialog.onPoorChoiceMade = () => {
       }
     }
   }
-  
+
   engine.addSystem(new BruteBattleCry());
 
-  walkClip.play()
+  bruteWalkClip.play();
 
   brute.addComponent(new LerpData());
   brute.addComponent(
@@ -199,7 +195,7 @@ dialog.onPoorChoiceMade = () => {
           //fighter.addComponent(new TimeOut(HIT_TIME));
           spinAttack.stop();
           hitInFace.play();
-          walkClip.playing = false;
+          bruteWalkClip.playing = false;
           spinAttack.playing = false;
           turnRClip.playing = false;
           deathFromFront.playing = false;
@@ -213,7 +209,7 @@ dialog.onPoorChoiceMade = () => {
             log("play death animation");
             spinAttack.stop();
             hitInFace.stop();
-            walkClip.stop();
+            bruteWalkClip.stop();
             dead = true;
             deathFromFront.play();
             //deathFromFront.playing = true;
@@ -244,12 +240,12 @@ dialog.onPoorChoiceMade = () => {
     return new Promise(resolve => {
       brute.addComponentOrReplace(
         new utils.Delay(2000, () => {
-          resolve("resolved")
+          resolve("resolved");
         })
       );
     });
   }
-  
+
   async function asyncCall() {
     log("calling");
     var result = await resolveAfter2Seconds();
@@ -258,21 +254,20 @@ dialog.onPoorChoiceMade = () => {
     log(result);
     // expected output: 'resolved'
   }
-  
 };
 
 dialog.onSequenceComplete = () => {
-  walkClip.pause();
+  riversWalkClip.pause();
   log("in onSequenceCompleted");
-  // log("trying to play unlock Spell animation");
-  // unlockSpell.play();
-  // unlockSpell.looping = false;
+  log("trying to play unlock Spell animation");
+  unlockSpell.play();
+  unlockSpell.looping = false;
   log("trying to play salute animation");
   salute.play();
   salute.looping = false;
 };
 
-walkClip.play();
+riversWalkClip.play();
 
 // Walk System
 export class GnarkWalk {
@@ -280,7 +275,7 @@ export class GnarkWalk {
     if (!oldmanrivers.hasComponent(TimeOut) && !raiseDeadClip.playing) {
       let transform = oldmanrivers.getComponent(Transform);
       let path = oldmanrivers.getComponent(LerpData);
-      walkClip.playing = true;
+      riversWalkClip.playing = true;
       turnRClip.playing = false;
       if (path.fraction < 1) {
         path.fraction += dt / 12;
@@ -297,7 +292,7 @@ export class GnarkWalk {
         }
         path.fraction = 0;
         transform.lookAt(path.array[path.target]);
-        walkClip.pause();
+        riversWalkClip.pause();
         turnRClip.play();
         turnRClip.looping = false;
         oldmanrivers.addComponent(new TimeOut(TURN_TIME));
@@ -334,7 +329,7 @@ export class BattleCry {
       if (raiseDeadClip.playing == false) {
         raiseDeadClip.reset();
         raiseDeadClip.playing = true;
-        walkClip.playing = false;
+        riversWalkClip.playing = false;
         turnRClip.playing = false;
       }
       let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
