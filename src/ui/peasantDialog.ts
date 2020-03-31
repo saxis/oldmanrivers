@@ -151,7 +151,7 @@ export class PeasantDialog extends SimpleDialog {
       .endOptionsGroup()
       .say(
         () =>
-          "Old Man Rivers says, \"Agatha is an old sorceress. A real piece or work. Me and the [council] had to imprison her.\"",
+          "Old Man Rivers says, \"Agathat  is an old sorceress. A real piece or work. Me and the [council] had to imprison her.\"",
         { color: npcColor }
       )
       .beginOptionsGroup()
