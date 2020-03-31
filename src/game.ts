@@ -264,9 +264,9 @@ dialog.onPoorChoiceMade = () => {
 dialog.onSequenceComplete = () => {
   walkClip.pause();
   log("in onSequenceCompleted");
-  log("trying to play unlock Spell animation");
-  unlockSpell.play();
-  unlockSpell.looping = false;
+  // log("trying to play unlock Spell animation");
+  // unlockSpell.play();
+  // unlockSpell.looping = false;
   log("trying to play salute animation");
   salute.play();
   salute.looping = false;

@@ -63,67 +63,7 @@ export class PeasantDialog extends SimpleDialog {
     const npcColor = Color4.White();
     const playerColor = Color4.White();
 
-    // const bottomFloorDoor = new Entity();
-    // bottomFloorDoor.addComponentOrReplace(resources.models.woodenDoor);
-    // const firstFloorDoorLoc = new Transform({
-    //   position: new Vector3(20.25, 1.63, 19.42)
-    // });
-    // bottomFloorDoor.addComponentOrReplace(firstFloorDoorLoc);
-    // bottomFloorDoor.addComponent(
-    //   new AudioSource(resources.sounds.doorIsLocked)
-    //   //new AudioSource(resources.sounds.peasantunlock)
-    // );
-    // engine.addEntity(bottomFloorDoor);
-
-    // const bottomDoorPivot = new Entity();
-    // bottomDoorPivot.addComponent(
-    //   new Transform({
-    //     //position: new Vector3(20.25, 1.6, 19.42)
-    //     position: new Vector3(19.75, 1.6, 19.42)
-    //     //position: new Vector3(19.71, 2, 19.42)
-    //   })
-    // );
-    // bottomDoorPivot.addComponent(new DoorState());
-    // engine.addEntity(bottomDoorPivot);
-    // bottomFloorDoor.setParent(bottomDoorPivot);
-    // bottomFloorDoor.addComponent(
-    //   new OnClick(e => {
-    //     bottomFloorDoor.getComponent(AudioSource).playOnce();
-    //     if (unlockDoor) {
-    //       // let state = bottomFloorDoor.getParent().getComponent(DoorState);
-    //       // state.closed = !state.closed;
-    //       //bottomFloorDoor.removeComponent(AudioSource);
-    //     }
-    //   })
-    // );
-
-    // const trigger = new Entity();
-    // engine.addEntity(trigger);
-    // trigger.addComponent(
-    //   new Transform({
-    //     position: new Vector3(20.255, 1.6, 21)
-    //   })
-    // );
-    // trigger.addComponent(
-    //   new utils.TriggerComponent(
-    //     new utils.TriggerBoxShape(new Vector3(4.2, 3.8), Vector3.Zero()),
-    //     //new utils.TriggerBoxShape(new Vector3(4.2, 3.8), Vector3.Zero()),
-    //     0,
-    //     0,
-    //     null,
-    //     null,
-    //     (): void => {
-    //       if (unlockDoor) {
-    //         //engine.removeEntity(bottomFloorDoor);
-    //       }
-    //     },
-    //     (): void => {
-    //       if (unlockDoor) {
-    //         //engine.addEntity(bottomFloorDoor);
-    //       }
-    //     }
-    //   )
-    // );
+  
 
     this.dialogTree = new SimpleDialog.DialogTree()
       .if(() => firstTimeDialog)
@@ -165,12 +105,12 @@ export class PeasantDialog extends SimpleDialog {
               )
               .say(() => 
                 'Old Man Rivers says, "She is out to the East if you want to get a good look at her."', { color: npcColor})
-              .say(() => "Over by the magic castle where maybe the king can keep an eye on her", {color:npcColor})
-              .say(() => "She may try to talk to you.. don't believe her lies", {color: npcColor})
+              .say(() => 'Old Man Rivers says, "Over by the magic castle where maybe the king can keep an eye on her."', {color:npcColor})
+              .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies."', {color: npcColor})
               .call(() => this.onSequenceComplete())
             .endOption()
             .option(() => "Sometimes you have to do what you have to do")
-              .say(() => "Sometimes you have to do what you have to do Old Man", {color: playerColor})
+              .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: playerColor})
               .say(
                 () =>
                 'Old Man Rivers says, "Indeed. Fare thee well adventurer. Safe travels"',
@@ -182,18 +122,19 @@ export class PeasantDialog extends SimpleDialog {
       .if(() => !unlockDoor)
       .say(() => 'Old Man Rivers says, "Did that old witch send you back herer?"')
       .beginOptionsGroup()
-      .option(() => "She did. I want to free her, she said she would rewward me!")
-        .say(() => 'You say, "She promised me some treasure. How do I get past the crystals Old Man?"', { color: playerColor })
+      .option(() => "She did. I want to free her, she said she would reward me!")
+        .say(() => 'You say, "She promised me some treasure. Now how do I get past the crystals Old Man?"', { color: playerColor })
         .say(
           () =>
           'Old Man Rivers says, "Its your funeral. "',
           { color: npcColor }
         )
-        .say(() => "You will have to kill me to make me talk", {color: npcColor})
+        .say(() => 'Old Man Rivers say, "You\'ve made a poor choice. I\'ve sent for my son. After you and he have a chat we can talk crystals."', {color: npcColor})
         .call(() =>  this.onPoorChoiceMade())
       .endOption()
 
       .option(() => "No just wanted to say hello again.")
+      .say(() => 'You say, "No, I just wanted to say hello sir".', {color: playerColor})
       .say(
         () =>
           'Old Man Rivers says, "Ah. I understand. Good to see you as well adventurer"',
