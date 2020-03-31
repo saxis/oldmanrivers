@@ -28,6 +28,7 @@ export default {
         wallStoneSmall: new GLTFShape("models/Wall_Stone_Small/Wall_Stone_Small.glb"),
         twoBladesOfGrassShape: new GLTFShape("models/Grass03.glb"),
         goblin: new GLTFShape("models/goblinAnimated3.glb"),
+        brute: new GLTFShape("models/BruteAnimated6.glb"),
         fighter: new GLTFShape("models/FighterLadyAnimated3.glb"),
         sorceress: new GLTFShape("models/sorceressAnimated3.glb"),
         openBook: new GLTFShape("models/Book_06/Book_06.glb"),

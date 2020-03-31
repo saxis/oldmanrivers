@@ -15,16 +15,16 @@ export function CreateOutside(): void {
   
   
   
-    const tree_Dead_04 = new Entity();
-    const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
-    tree_Dead_04.addComponentOrReplace(gltfShape_4);
-    const transform_5 = new Transform({
-      position: new Vector3(10.5, 0, 12.51),
-      rotation: new Quaternion(0, 0, 0, 1),
-      scale: new Vector3(1, 1, 1)
-    });
-    tree_Dead_04.addComponentOrReplace(transform_5);
-    engine.addEntity(tree_Dead_04);
+    // const tree_Dead_04 = new Entity();
+    // const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
+    // tree_Dead_04.addComponentOrReplace(gltfShape_4);
+    // const transform_5 = new Transform({
+    //   position: new Vector3(10.5, 0, 12.51),
+    //   rotation: new Quaternion(0, 0, 0, 1),
+    //   scale: new Vector3(1, 1, 1)
+    // });
+    // tree_Dead_04.addComponentOrReplace(transform_5);
+    // engine.addEntity(tree_Dead_04);
   
   
     const grass032 = new Entity()

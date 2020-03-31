@@ -12,6 +12,7 @@ export class PeasantDialog extends SimpleDialog {
 
   public onCorrectAnswer: (questionId: number) => void;
   public onSequenceComplete: () => void;
+  public onPoorChoiceMade: () => void;
 
   constructor(gameCanvas: UICanvas) {
     // Create a new SimpleDialog to manage the dialog tree
@@ -96,135 +97,112 @@ export class PeasantDialog extends SimpleDialog {
     //   })
     // );
 
-    const trigger = new Entity();
-    engine.addEntity(trigger);
-    trigger.addComponent(
-      new Transform({
-        position: new Vector3(20.255, 1.6, 21)
-      })
-    );
-    trigger.addComponent(
-      new utils.TriggerComponent(
-        new utils.TriggerBoxShape(new Vector3(4.2, 3.8), Vector3.Zero()),
-        //new utils.TriggerBoxShape(new Vector3(4.2, 3.8), Vector3.Zero()),
-        0,
-        0,
-        null,
-        null,
-        (): void => {
-          if (unlockDoor) {
-            //engine.removeEntity(bottomFloorDoor);
-          }
-        },
-        (): void => {
-          if (unlockDoor) {
-            //engine.addEntity(bottomFloorDoor);
-          }
-        }
-      )
-    );
+    // const trigger = new Entity();
+    // engine.addEntity(trigger);
+    // trigger.addComponent(
+    //   new Transform({
+    //     position: new Vector3(20.255, 1.6, 21)
+    //   })
+    // );
+    // trigger.addComponent(
+    //   new utils.TriggerComponent(
+    //     new utils.TriggerBoxShape(new Vector3(4.2, 3.8), Vector3.Zero()),
+    //     //new utils.TriggerBoxShape(new Vector3(4.2, 3.8), Vector3.Zero()),
+    //     0,
+    //     0,
+    //     null,
+    //     null,
+    //     (): void => {
+    //       if (unlockDoor) {
+    //         //engine.removeEntity(bottomFloorDoor);
+    //       }
+    //     },
+    //     (): void => {
+    //       if (unlockDoor) {
+    //         //engine.addEntity(bottomFloorDoor);
+    //       }
+    //     }
+    //   )
+    // );
 
     this.dialogTree = new SimpleDialog.DialogTree()
       .if(() => firstTimeDialog)
-      .call(() => (firstTimeDialog = false))
-      .say(
-        () =>
+        .call(() => (firstTimeDialog = false))
+        .say(
+          () =>
           "Old Man Rivers says, \"Hail traveler. Been some time since I've seen [visitors] around these parts. How can I help you? \"",
-        { color: npcColor }
-      )
-      .beginOptionsGroup()
-      .option(() => "What kind of visitors?")
-      .say(() => 'You say, "What kind of visitors?"', { color: playerColor })
-      .endOption()
-      .endOptionsGroup()
-      .say(
-        () =>
+          { color: npcColor }
+        )
+          .beginOptionsGroup()
+            .option(() => "What kind of visitors?")
+              .say(() => 'You say, "What kind of visitors?"', { color: playerColor })
+            .endOption()
+          .endOptionsGroup()
+        .say(
+          () =>
           'Old Man Rivers says, "Adventurers like yourself. Anyway, I\'m relaxing since the incident with [Agatha]."',
-        { color: npcColor }
-      )
-      .beginOptionsGroup()
-      .option(() => "Who is Agathat?")
-      .say(() => 'You say, "Who is Agathat? What are you talking about Old Man."', {
-        color: playerColor
-      })
-      .endOption()
-      .endOptionsGroup()
-      .say(
-        () =>
-          "Old Man Rivers says, \"Agathat  is an old sorceress. A real piece or work. Me and the [council] had to imprison her.\"",
-        { color: npcColor }
-      )
-      .beginOptionsGroup()
-      .option(() => "I'm brave enough!")
-      .say(() => 'You say, "I\'m brave enough"', { color: playerColor })
-      .say(
-        () =>
-          'Old Man Rivers says, "Finally.. gods be praised. I will unlock the door to the first floor. Hopefully you can make your way to the top and defeat her.  "',
-        { color: npcColor }
-      )
-      .call(() => {
-        //bottomFloorDoor.getComponent(AudioSource).playOnce();
-      })
-      .call(() => this.onSequenceComplete())
-      // .call(async () => {
-      //   log("Unlock the first floor door and remove the magic sound");
-      //   unlockDoor = true;
-      //   await bottomFloorDoor.removeComponent(AudioSource);
-      // })
-      // .call(async () => {
-      //   log("in the second call to add the grobb sound back to the door");
-      //   await bottomFloorDoor.addComponent(
-      //     new AudioSource(resources.sounds.grobb)
-      //   );
-      // })
-      .endOption()
-
-      .option(() => "Maybe some other time...")
-      .say(
-        () =>
-          'Old Man Rivers says, "Well, thanks anyway.. I need to get back to guarding. Pleasant day"',
-        { color: npcColor }
-      )
-      .endOption()
-      .endOptionsGroup()
+          { color: npcColor }
+        )
+          .beginOptionsGroup()
+            .option(() => "Who is Agatha?")
+              .say(() => 'You say, "Who is Agatha? What are you talking about Old Man?"', {
+                color: playerColor
+              })
+            .endOption()
+          .endOptionsGroup()
+        .say(
+          () =>
+          "Old Man Rivers says, \"Agatha is a mean old sorceress. A real piece or work. Me and the [council] had to imprison her.\"",
+          { color: npcColor }
+        )
+          .beginOptionsGroup()
+            .option(() => "Why did you have to do that?")
+              .say(() => 'You say, "Why did you have to imprison her?"', { color: playerColor })
+              .say(
+                () =>
+                'Old Man Rivers says, "Sometimes its the only choice lad. We did what we thought was best"',
+                { color: npcColor }
+              )
+              .say(() => 
+                'Old Man Rivers says, "She is out to the East if you want to get a good look at her."', { color: npcColor})
+              .say(() => "Over by the magic castle where maybe the king can keep an eye on her", {color:npcColor})
+              .say(() => "She may try to talk to you.. don't believe her lies", {color: npcColor})
+              .call(() => this.onSequenceComplete())
+            .endOption()
+            .option(() => "Sometimes you have to do what you have to do")
+              .say(() => "Sometimes you have to do what you have to do Old Man", {color: playerColor})
+              .say(
+                () =>
+                'Old Man Rivers says, "Indeed. Fare thee well adventurer. Safe travels"',
+                { color: npcColor }
+              )
+            .endOption()
+          .endOptionsGroup()
       .else()
       .if(() => !unlockDoor)
-      .say(() => 'Old Man Rivers says, "Did you gather your courage traveler?"')
+      .say(() => 'Old Man Rivers says, "Did that old witch send you back herer?"')
       .beginOptionsGroup()
-      .option(() => "I'm ready to face the tower!")
-      .say(() => 'You say, "I\'m ready"', { color: playerColor })
-      .say(
-        () =>
-          'Old Man Rivers says, "Fair enough. I will unlock the door to the first floor. Hopefully you can make your way to the top and defeat her."',
-        { color: npcColor }
-      )
-      .call(() => {
-        //bottomFloorDoor.getComponent(AudioSource).playOnce();
-      })
-      .call(() => this.onSequenceComplete())
-      .call(async () => {
-        log("Unlock the first floor door and remove the magic sound");
-        unlockDoor = true;
-        //await bottomFloorDoor.removeComponent(AudioSource);
-      })
-      .call(async () => {
-        log("in the second call to add the grobb sound back to the door");
-        // await bottomFloorDoor.addComponent(
-        //   new AudioSource(resources.sounds.grobb)
-        // );
-      })
+      .option(() => "She did. I want to free her, she said she would rewward me!")
+        .say(() => 'You say, "She promised me some treasure. How do I get past the crystals Old Man?"', { color: playerColor })
+        .say(
+          () =>
+          'Old Man Rivers says, "Its your funeral. "',
+          { color: npcColor }
+        )
+        .say(() => "You will have to kill me to make me talk", {color: npcColor})
+        .call(() =>  this.onPoorChoiceMade())
       .endOption()
 
-      .option(() => "Not just yet...")
+      .option(() => "No just wanted to say hello again.")
       .say(
         () =>
-          'Old Man Rivers says, "I understand. Not many have the necessary grit. I need to get back to guarding. Pleasant day"',
+          'Old Man Rivers says, "Ah. I understand. Good to see you as well adventurer"',
         { color: npcColor }
       )
       .endOption()
       .endOptionsGroup()
       .else()
-      .say(() => 'Old Man Rivers says, "The tower is unlocked. Best of luck."')
+      .say(() => 'Old Man Rivers says, "Hello adventurer."')
       .endif()
       .endif();
   }
