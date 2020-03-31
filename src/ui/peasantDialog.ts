@@ -129,29 +129,29 @@ export class PeasantDialog extends SimpleDialog {
       .call(() => (firstTimeDialog = false))
       .say(
         () =>
-          "Old Man Rivers says, \"Hail traveler. Been some time since I've seen visitors around these parts. I'm just here guarding the [tower]. How can I help you? \"",
+          "Old Man Rivers says, \"Hail traveler. Been some time since I've seen [visitors] around these parts. How can I help you? \"",
         { color: npcColor }
       )
       .beginOptionsGroup()
-      .option(() => "What tower?")
-      .say(() => 'You say, "What tower?"', { color: playerColor })
+      .option(() => "What kind of visitors?")
+      .say(() => 'You say, "What kind of visitors?"', { color: playerColor })
       .endOption()
       .endOptionsGroup()
       .say(
         () =>
-          'Old Man Rivers says, "Yeah, the creepy tower right over there. Anyway, I\'m guarding the thing until someone comes along that can handle [matters]."',
+          'Old Man Rivers says, "Adventurers like yourself. Anyway, I\'m relaxing since the incident with [Agatha]."',
         { color: npcColor }
       )
       .beginOptionsGroup()
-      .option(() => "What kind of matters?")
-      .say(() => 'You say, "What sort of matters? I might be able to help."', {
+      .option(() => "Who is Agathat?")
+      .say(() => 'You say, "Who is Agathat? What are you talking about Old Man."', {
         color: playerColor
       })
       .endOption()
       .endOptionsGroup()
       .say(
         () =>
-          "Old Man Rivers says, \"An old sorceress lives in there. She's been doing.. bad things around these parts. I'm hoping to find someone [brave] enough to deal with her. Permanently.\"",
+          "Old Man Rivers says, \"Agatha is an old sorceress. A real piece or work. Me and the [council] had to imprison her.\"",
         { color: npcColor }
       )
       .beginOptionsGroup()
