@@ -53,5 +53,6 @@ export default {
     textures: {
         textContainer: new Texture("src/images/dialogs/textContainer.png"),
         optionsContainer: new Texture("src/images/dialogs/optionsContainer.png"),
+        blueContainer: new Texture("src/images/dialogs/Sax_Text_Box_blue.png")
       }
 }

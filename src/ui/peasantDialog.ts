@@ -33,24 +33,32 @@ export class PeasantDialog extends SimpleDialog {
         positionX: "15%"
       },
       dialogText: {
-        width: "25%",
+        //width: "25%",
+        width: "50%",
+        //.height: "25%",
         height: "25%",
         textSpeed: 15,
         textIdleTime: 1,
         textConfig: { fontSize: 16, paddingLeft: 25, paddingRight: 25 },
-        background: resources.textures.textContainer,
-        backgroundConfig: { sourceWidth: 512, sourceHeight: 257 }
+        //background: resources.textures.textContainer,
+        background: resources.textures.blueContainer,
+        //backgroundConfig: { sourceWidth: 512, sourceHeight: 257 }
+        backgroundConfig: { sourceWidth: 200, sourceHeight: 70 }
       },
       optionsContainer: {
         stackOrientation: UIStackOrientation.VERTICAL,
         spacing: 0,
-        width: "40%",
-        height: "12%",
+        //width: "40%",
+        width: "50%",
+        //height: "12%",
+        height: "25%",
         vAlign: "top",
         hAlign: "center",
         positionY: "-65%",
-        background: resources.textures.optionsContainer,
-        backgroundConfig: { sourceWidth: 512, sourceHeight: 79 },
+        //background: resources.textures.optionsContainer,
+        background: resources.textures.blueContainer,
+        //backgroundConfig: { sourceWidth: 512, sourceHeight: 79 },
+        backgroundConfig: {sourceWidth: 200, sourceHeight: 70},
         optionsTextConfig: { fontSize: 20, paddingLeft: 20, positionY: "-35%" }
       }
     });
@@ -109,7 +117,7 @@ export class PeasantDialog extends SimpleDialog {
               .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies."', {color: npcColor})
               .call(() => this.onSequenceComplete())
             .endOption()
-            .option(() => "Sometimes you have to do what you have to do")
+            .option(() => "Sometimes you have to do what you have to do.")
               .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: playerColor})
               .say(
                 () =>
@@ -124,22 +132,13 @@ export class PeasantDialog extends SimpleDialog {
       .beginOptionsGroup()
       .option(() => "She did. I want to free her, she said she would reward me!")
         .say(() => 'You say, "She promised me some treasure. Now how do I get past the crystals Old Man?"', { color: playerColor })
-        .say(
-          () =>
-          'Old Man Rivers says, "Its your funeral. "',
-          { color: npcColor }
-        )
+        .say(() => 'Old Man Rivers says, "Its your funeral. "', { color: npcColor})
         .say(() => 'Old Man Rivers say, "You\'ve made a poor choice. I\'ve sent for my son. After you and he have a chat we can talk crystals."', {color: npcColor})
         .call(() =>  this.onPoorChoiceMade())
       .endOption()
-
       .option(() => "No just wanted to say hello again.")
       .say(() => 'You say, "No, I just wanted to say hello sir".', {color: playerColor})
-      .say(
-        () =>
-          'Old Man Rivers says, "Ah. I understand. Good to see you as well adventurer"',
-        { color: npcColor }
-      )
+      .say(() => 'Old Man Rivers says, "Ah. I understand. Good to see you as well adventurer"', { color: npcColor})
       .endOption()
       .endOptionsGroup()
       .else()
