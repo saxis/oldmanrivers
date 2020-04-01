@@ -1,3 +1,3 @@
-import { PeasantDialog } from "./peasantDialog"
+import { PeasantDialog } from "./oldManDialog"
 
 export { PeasantDialog };
