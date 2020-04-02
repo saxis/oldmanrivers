@@ -104,8 +104,8 @@ export class PeasantDialog extends SimpleDialog {
           { color: npcColor }
         )
           .beginOptionsGroup()
-            .option(() => "Why did you have to do that?")
-              .say(() => 'You say, "Why did you have to imprison her?"', { color: playerColor })
+            .option(() => "Why did the Council have to do that?")
+              .say(() => 'You say, "Why did the Council have to imprison her?"', { color: playerColor })
               .say(
                 () =>
                 'Old Man Rivers says, "Sometimes its the only choice lad. We did what we thought was best"',

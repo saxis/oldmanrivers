@@ -8,7 +8,7 @@ export class Npc extends Entity {
       this.addComponent(model);
       this.addComponent(
         new Transform({
-          position: new Vector3(8, 0, 8)
+          position: new Vector3(12, 0, 5)
         })
       );
       this.addComponent(new AudioSource(sound));
