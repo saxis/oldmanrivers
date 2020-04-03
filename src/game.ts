@@ -2,7 +2,7 @@ import { BaseScene } from "./gameObjects/baseScene";
 import resources from "./resources";
 import { PeasantDialog } from "./ui/index";
 import { Npc } from "./gameObjects/npc";
-import { BuilderHUD } from "./modules/BuilderHUD";
+//import { BuilderHUD } from "./modules/BuilderHUD";
 import { CreateOutside } from "./gameObjects/outside";
 import utils from "../node_modules/decentraland-ecs-utils/index";
 import { createChannel } from "../node_modules/decentraland-builder-scripts/channel";
@@ -10,7 +10,7 @@ import { createInventory } from "../node_modules/decentraland-builder-scripts/in
 import Script1 from "../ff9257ec-9d62-404f-97c7-cf19c4035761/src/item";
 import Script2 from "../7402ef02-fc7f-4e19-b44a-4613ee2526c5/src/item";
 import Script3 from "../df8d742f-045c-4fe3-8c70-adfb47d22baf/src/item";
-import { getUserData } from "@decentraland/Identity";
+//import { getUserData } from "@decentraland/Identity";
 
 let baseScene = new BaseScene();
 let outside = new CreateOutside();
