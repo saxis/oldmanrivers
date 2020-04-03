@@ -127,7 +127,7 @@ oldmanrivers.addComponent(new LerpData());
 
 dialog.onPoorChoiceMade = () => {
   log("In on Poor choice made");
-  //engine.removeEntity(oldmanrivers);
+  engine.removeEntity(oldmanrivers);
   tree_Dead_04.getComponent(AudioSource).playOnce();
 
   const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);

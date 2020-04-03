@@ -128,7 +128,7 @@ export class PeasantDialog extends SimpleDialog {
           .endOptionsGroup()
       .else()
       .if(() => !unlockDoor)
-      .say(() => 'Old Man Rivers says, "Did that old witch send you back herer?"')
+      .say(() => 'Old Man Rivers says, "Did that old witch send you back here"')
       .beginOptionsGroup()
       .option(() => "She did. I want to free her, she said she would reward me!")
         .say(() => 'You say, "She promised me some treasure. Now how do I get past the crystals Old Man?"', { color: playerColor })
