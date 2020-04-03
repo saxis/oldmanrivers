@@ -18,7 +18,7 @@ let outside = new CreateOutside();
 let clicked = false;
 let dead = false;
 let HIT_POINTS = 5;
-let PLAYER_HP = 10;
+let PLAYER_HP = 5;
 let brutedead = false;
 let playerdead = false;
 
@@ -26,10 +26,10 @@ const gameCanvas = new UICanvas();
 const text = new UIText(gameCanvas);
 const instructions = new UIText(gameCanvas);
 
-text.value = `HP: ${PLAYER_HP}    Agatha HP: ${HIT_POINTS}`;
+text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
 text.vAlign = "bottom";
 text.positionX = -80;
-text.visible = true;
+text.visible = false;
 
 instructions.value =
   "The Brute has defeated you. Maybe the old man can help you figure out what to do next.";
@@ -133,6 +133,7 @@ dialog.onPoorChoiceMade = () => {
   const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);
   let fighterAnimator = new Animator();
   brute.addComponent(fighterAnimator);
+  text.visible = true;
 
   //Add walk animation
   const bruteWalkClip = new AnimationState("walk");
