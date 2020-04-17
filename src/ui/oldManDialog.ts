@@ -38,7 +38,7 @@ export class PeasantDialog extends SimpleDialog {
         //.height: "25%",
         height: "25%",
         textSpeed: 15,
-        textIdleTime: 1,
+        textIdleTime: 2,
         textConfig: { fontSize: 16, paddingLeft: 25, paddingRight: 25 },
         //background: resources.textures.textContainer,
         background: resources.textures.blueContainer,
@@ -100,7 +100,7 @@ export class PeasantDialog extends SimpleDialog {
           .endOptionsGroup()
         .say(
           () =>
-          "Old Man Rivers says, \"Agatha is a mean old sorceress. A real piece or work. Me and the [council] had to imprison her.\"",
+          "Old Man Rivers says, \"Agatha is a mean old sorceress. A real piece of work. Me and the [council] had to imprison her.\"",
           { color: npcColor }
         )
           .beginOptionsGroup()

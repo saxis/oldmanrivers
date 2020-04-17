@@ -3,7 +3,8 @@ import resources from "./resources";
 import { PeasantDialog } from "./ui/index";
 import { Npc } from "./gameObjects/npc";
 //import { BuilderHUD } from "./modules/BuilderHUD";
-import { CreateOutside } from "./gameObjects/outside";
+import { spawnEntity } from "./modules/SpawnerFunctions";
+//import { CreateOutside } from "./gameObjects/outside";
 import utils from "../node_modules/decentraland-ecs-utils/index";
 import { createChannel } from "../node_modules/decentraland-builder-scripts/channel";
 import { createInventory } from "../node_modules/decentraland-builder-scripts/inventory";
@@ -13,12 +14,12 @@ import Script3 from "../df8d742f-045c-4fe3-8c70-adfb47d22baf/src/item";
 //import { getUserData } from "@decentraland/Identity";
 
 let baseScene = new BaseScene();
-let outside = new CreateOutside();
+//let outside = new CreateOutside();
 
 let clicked = false;
 let dead = false;
 let HIT_POINTS = 5;
-let PLAYER_HP = 5;
+let PLAYER_HP = 15;
 let brutedead = false;
 let playerdead = false;
 
@@ -66,17 +67,17 @@ oldmanrivers.addComponent(
   )
 );
 
-const tree_Dead_04 = new Entity();
-const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
-tree_Dead_04.addComponentOrReplace(gltfShape_4);
-const transform_5 = new Transform({
-  position: new Vector3(10.5, 0, 12.51),
-  rotation: new Quaternion(0, 0, 0, 1),
-  scale: new Vector3(1, 1, 1)
-});
-tree_Dead_04.addComponentOrReplace(transform_5);
-engine.addEntity(tree_Dead_04);
-tree_Dead_04.addComponent(new AudioSource(resources.sounds.lava));
+// const tree_Dead_04 = new Entity();
+// const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
+// tree_Dead_04.addComponentOrReplace(gltfShape_4);
+// const transform_5 = new Transform({
+//   position: new Vector3(10.5, 0, 12.51),
+//   rotation: new Quaternion(0, 0, 0, 1),
+//   scale: new Vector3(1, 1, 1)
+// });
+// tree_Dead_04.addComponentOrReplace(transform_5);
+// engine.addEntity(tree_Dead_04);
+// tree_Dead_04.addComponent(new AudioSource(resources.sounds.lava));
 
 // //model stuff
 const point1 = new Vector3(12, 0, 5);
@@ -128,7 +129,7 @@ oldmanrivers.addComponent(new LerpData());
 dialog.onPoorChoiceMade = () => {
   log("In on Poor choice made");
   engine.removeEntity(oldmanrivers);
-  tree_Dead_04.getComponent(AudioSource).playOnce();
+  //tree_Dead_04.getComponent(AudioSource).playOnce();
 
   const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);
   let fighterAnimator = new Animator();
@@ -201,7 +202,7 @@ dialog.onPoorChoiceMade = () => {
             turnRClip.playing = false;
             hitInFace.playing = false;
             PLAYER_HP--;
-            text.value = `HP: ${PLAYER_HP}    Agatha HP: ${HIT_POINTS}`;
+            text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
             log("PLAYER HP is now: ", PLAYER_HP);
 
             if (PLAYER_HP == 0) {
@@ -515,6 +516,11 @@ function spawnLoot() {
   // engine.addEntity(scroll)
   // engine.addEntity(oldIronSword)
 }
+const lantern = spawnEntity(5.6,2.2,8.82,  0,-90,0,  1,1,1)
+lantern.addComponentOrReplace(resources.models.lantern)
+
+const leaves = spawnEntity(8,0,8,  0,0,0,  1,1,1)
+leaves.addComponentOrReplace(resources.models.animatedleaves)
 
 //const hud: BuilderHUD = new BuilderHUD();
-// hud.attachToEntity(grassPatchSmall_04)
+//hud.attachToEntity(leaves)
