@@ -33,8 +33,8 @@ text.positionX = -80;
 text.visible = false;
 
 instructions.value =
-  "The Brute has defeated you. Maybe the old man can help you figure out what to do next.";
-instructions.fontSize = 30;
+  "The Brute has defeated you. Seek out the sorceress Mehetra in her abode to the far North.";
+instructions.fontSize = 20;
 instructions.hAlign = "left";
 instructions.positionX = 200;
 instructions.vAlign = "center";
@@ -89,6 +89,10 @@ const point4 = new Vector3(2, 0, 3);
 const path: Vector3[] = [point1, point2, point3, point4];
 const TURN_TIME = 0.9;
 
+const lantern = spawnEntity(5.6,2.2,8.82,  0,-90,0,  1,1,1)
+lantern.addComponentOrReplace(resources.models.lantern)
+lantern.addComponent(new AudioSource(resources.sounds.lava))
+
 @Component("timeOut")
 export class TimeOut {
   timeLeft: number;
@@ -129,7 +133,7 @@ oldmanrivers.addComponent(new LerpData());
 dialog.onPoorChoiceMade = () => {
   log("In on Poor choice made");
   engine.removeEntity(oldmanrivers);
-  //tree_Dead_04.getComponent(AudioSource).playOnce();
+  lantern.getComponent(AudioSource).playOnce();
 
   const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);
   let fighterAnimator = new Animator();
@@ -511,13 +515,12 @@ function spawnLoot() {
     createChannel(channelId, scroll, channelBus)
   );
 
-  // engine.addEntity(fantasyChest)
-  // engine.addEntity(fantasyIronKey)
-  // engine.addEntity(scroll)
-  // engine.addEntity(oldIronSword)
+  engine.addEntity(fantasyChest)
+  engine.addEntity(fantasyIronKey)
+  engine.addEntity(scroll)
+  engine.addEntity(oldIronSword)
 }
-const lantern = spawnEntity(5.6,2.2,8.82,  0,-90,0,  1,1,1)
-lantern.addComponentOrReplace(resources.models.lantern)
+
 
 const leaves = spawnEntity(16,0,0,  0,0,0,  1,1,1)
 leaves.addComponentOrReplace(resources.models.animatedleaves)
