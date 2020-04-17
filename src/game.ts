@@ -519,7 +519,7 @@ function spawnLoot() {
 const lantern = spawnEntity(5.6,2.2,8.82,  0,-90,0,  1,1,1)
 lantern.addComponentOrReplace(resources.models.lantern)
 
-const leaves = spawnEntity(8,0,8,  0,0,0,  1,1,1)
+const leaves = spawnEntity(16,0,0,  0,0,0,  1,1,1)
 leaves.addComponentOrReplace(resources.models.animatedleaves)
 
 //const hud: BuilderHUD = new BuilderHUD();

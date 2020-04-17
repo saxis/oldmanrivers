@@ -19,12 +19,10 @@ export default {
     },
     models: {
         staticobjects: new GLTFShape("models/static_objects_glb.glb"),
-        animatedleaves: new GLTFShape("models/animated_leaves_glb.glb"),
+        animatedleaves: new GLTFShape("models/leaves_falling_glb.glb"),
         lantern: new GLTFShape("models/lantern_glb.glb"),
         grassblades: new GLTFShape("models/grass_glb.glb"),
         brute: new GLTFShape("models/BruteAnimated6.glb"),
-        fighter: new GLTFShape("models/FighterLadyAnimated3.glb"),
-        sorceress: new GLTFShape("models/sorceressAnimated3.glb"),
         peasant: new GLTFShape("models/peasantAnimated2.glb"),
     },
     textures: {

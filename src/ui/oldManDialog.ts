@@ -84,46 +84,64 @@ export class PeasantDialog extends SimpleDialog {
           .beginOptionsGroup()
             .option(() => "What kind of visitors?")
               .say(() => 'You say, "What kind of visitors?"', { color: playerColor })
-            .endOption()
-          .endOptionsGroup()
-        .say(
-          () =>
-          'Old Man Rivers says, "Adventurers like yourself. Anyway, I\'m relaxing since the incident with [Agatha]."',
-          { color: npcColor }
-        )
-          .beginOptionsGroup()
-            .option(() => "Who is Agatha?")
-              .say(() => 'You say, "Who is Agatha? What are you talking about Old Man?"', {
-                color: playerColor
-              })
-            .endOption()
-          .endOptionsGroup()
-        .say(
-          () =>
-          "Old Man Rivers says, \"Agatha is a mean old sorceress. A real piece of work. Me and the [council] had to imprison her.\"",
-          { color: npcColor }
-        )
-          .beginOptionsGroup()
-            .option(() => "Why did the Council have to do that?")
-              .say(() => 'You say, "Why did the Council have to imprison her?"', { color: playerColor })
               .say(
                 () =>
-                'Old Man Rivers says, "Sometimes its the only choice lad. We did what we thought was best"',
+                'Old Man Rivers says, "Adventurers like yourself. Anyway, I\'m relaxing since the incident with [Agatha]."',
                 { color: npcColor }
               )
-              .say(() => 
-                'Old Man Rivers says, "She is out to the East if you want to get a good look at her."', { color: npcColor})
-              .say(() => 'Old Man Rivers says, "Over by the magic castle where maybe the king can keep an eye on her."', {color:npcColor})
-              .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies."', {color: npcColor})
-              .call(() => this.onSequenceComplete())
+                .beginOptionsGroup()
+                  .option(() => "Who is Agatha?")
+                    .say(() => 'You say, "Who is Agatha? What are you talking about Old Man?"', {
+                      color: playerColor
+                    })
+                    .say(
+                      () =>
+                      "Old Man Rivers says, \"Agatha is a mean old sorceress. A real piece of work. Me and the [council] had to imprison her.\"",
+                      { color: npcColor }
+                    )
+                      .beginOptionsGroup()
+                        .option(() => "Why did the Council have to do that?")
+                          .say(() => 'You say, "Why did the Council have to imprison her?"', { color: playerColor })
+                          .say(
+                            () =>
+                            'Old Man Rivers says, "Sometimes its the only choice lad. We did what we thought was best"',
+                            { color: npcColor }
+                          )
+                          .say(() => 
+                            'Old Man Rivers says, "She is out to the East if you want to get a good look at her."', { color: npcColor})
+                          .say(() => 'Old Man Rivers says, "Over by the magic castle where maybe the king can keep an eye on her."', {color:npcColor})
+                          .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies."', {color: npcColor})
+                          .call(() => this.onSequenceComplete())
+                        .endOption()
+                        .option(() => "Sometimes you have to do what you have to do.")
+                          .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: playerColor})
+                          .say(
+                            () =>
+                            'Old Man Rivers says, "Indeed. Fare thee well adventurer. Safe travels"',
+                            { color: npcColor }
+                          )
+                        .endOption()
+                      .endOptionsGroup()
+                  .endOption()
+                  .option(() => "I don't care about this at all.")
+                    .say(() => 'You say, "I do not have time for this right now".', {color: playerColor})
+                    .say(
+                      () =>
+                      'Old Man Rivers says, "No problem. Fare well adventurer. Safe travels"',
+                      { color: npcColor }
+                    )
+                    .call(() => (firstTimeDialog = true))
+                  .endOption()
+                .endOptionsGroup()
             .endOption()
-            .option(() => "Sometimes you have to do what you have to do.")
-              .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: playerColor})
+            .option(() => "Lets talk some other time.")
+              .say(() => 'You say, "I do not have time for this right now".', {color: playerColor})
               .say(
                 () =>
-                'Old Man Rivers says, "Indeed. Fare thee well adventurer. Safe travels"',
+                'Old Man Rivers says, "No problem. Fare well adventurer. Safe travels"',
                 { color: npcColor }
               )
+              .call(() => (firstTimeDialog = true))
             .endOption()
           .endOptionsGroup()
       .else()
