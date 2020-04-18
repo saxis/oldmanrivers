@@ -15,7 +15,8 @@ export default {
         missioncomplete: new AudioClip("sounds/missioncomplete.mp3"),
         executioner: new AudioClip("sounds/executioner.mp3"),
         button: new AudioClip("sounds/button.mp3"),
-        evillaugh: new AudioClip("sounds/crazyChickLaugh.mp3")
+        evillaugh: new AudioClip("sounds/crazyChickLaugh.mp3"),
+        birdsong: new AudioClip("sounds/Bird-song.mp3")
     },
     models: {
         staticobjects: new GLTFShape("models/static_objects_glb.glb"),

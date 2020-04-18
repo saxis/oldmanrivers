@@ -18,8 +18,8 @@ let baseScene = new BaseScene();
 
 let clicked = false;
 let dead = false;
-let HIT_POINTS = 5;
-let PLAYER_HP = 15;
+let HIT_POINTS = 50;
+let PLAYER_HP = 50;
 let brutedead = false;
 let playerdead = false;
 
@@ -48,6 +48,27 @@ soundbox2.getComponent(Transform).position.set(7, 0, 8);
 soundbox2.addComponent(new AudioSource(resources.sounds.evillaugh));
 engine.addEntity(soundbox2);
 
+const grassBase = new Entity("grass");
+    const grassShape = new GLTFShape(
+      "models/FloorBaseGrass_01/FloorBaseGrass_01.glb"
+    );
+    grassBase.addComponentOrReplace(grassShape);
+    const grassLoc = new Transform({
+      position: new Vector3(8, 0, 8),
+      rotation: new Quaternion(0, 0, 0, 1),
+      scale: new Vector3(1, 1, 1),
+    });
+    grassBase.addComponentOrReplace(grassLoc);
+    engine.addEntity(grassBase);
+    grassBase.addComponent(new AudioSource(resources.sounds.birdsong));
+    grassBase.getComponent(AudioSource).playOnce();
+    grassBase.addComponent(
+      new utils.Delay(80000, () => {
+        log("After 3 minute delay playing song again")
+        grassBase.getComponent(AudioSource).playOnce();
+      })
+    )
+
 
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
@@ -67,17 +88,8 @@ oldmanrivers.addComponent(
   )
 );
 
-// const tree_Dead_04 = new Entity();
-// const gltfShape_4 = new GLTFShape("models/Tree_Dead_04.glb");
-// tree_Dead_04.addComponentOrReplace(gltfShape_4);
-// const transform_5 = new Transform({
-//   position: new Vector3(10.5, 0, 12.51),
-//   rotation: new Quaternion(0, 0, 0, 1),
-//   scale: new Vector3(1, 1, 1)
-// });
-// tree_Dead_04.addComponentOrReplace(transform_5);
-// engine.addEntity(tree_Dead_04);
-// tree_Dead_04.addComponent(new AudioSource(resources.sounds.lava));
+
+
 
 // //model stuff
 const point1 = new Vector3(12, 0, 5);
@@ -121,7 +133,7 @@ oldmanriversAnimator.addClip(riversWalkClip);
 const turnRClip = new AnimationState("turnLeft");
 turnRClip.looping = false;
 oldmanriversAnimator.addClip(turnRClip);
-const raiseDeadClip = new AnimationState("talking");
+const raiseDeadClip = new AnimationState("salute");
 oldmanriversAnimator.addClip(raiseDeadClip);
 const unlockSpell = new AnimationState("unlockSpell");
 oldmanriversAnimator.addClip(unlockSpell);
@@ -130,9 +142,18 @@ oldmanriversAnimator.addClip(salute);
 
 oldmanrivers.addComponent(new LerpData());
 
+dialog.onDialogStarted = () => {
+  oldmanrivers.getComponent(OnPointerDown).showFeeback = false;
+}
+
+dialog.onDialogEnded = () => {
+  oldmanrivers.getComponent(OnPointerDown).showFeeback = true;
+}
+
 dialog.onPoorChoiceMade = () => {
   log("In on Poor choice made");
   engine.removeEntity(oldmanrivers);
+  grassBase.getComponent(AudioSource).volume = 0;
   lantern.getComponent(AudioSource).playOnce();
 
   const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);
@@ -200,15 +221,21 @@ dialog.onPoorChoiceMade = () => {
         if (!dead && !clicked) {
           if (spinAttack.playing == false) {
             spinAttack.reset();
+            log('Starting to play the spinAttack')
             spinAttack.play();
-            spinAttack.playing = true;
+            //spinAttack.playing = true;
             bruteWalkClip.playing = false;
             turnRClip.playing = false;
             hitInFace.playing = false;
+
+            longAsyncCall();
+            log('stopping spinattack after long asyncall')
+            //spinAttack.stop();
+
             PLAYER_HP--;
             text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
             log("PLAYER HP is now: ", PLAYER_HP);
-
+            
             if (PLAYER_HP == 0) {
               log("play dead music.. Kick player out of the scene");
               soundbox2.getComponent(AudioSource).playOnce();
@@ -223,6 +250,8 @@ dialog.onPoorChoiceMade = () => {
                 })
               );
             }
+          } else {
+            log('spinAttack is playing already')
           }
         }
         let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
@@ -259,6 +288,7 @@ dialog.onPoorChoiceMade = () => {
 
           HIT_POINTS = HIT_POINTS - 1;
           log("hit points is now: ", HIT_POINTS);
+          text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
 
           if (HIT_POINTS == 0) {
             log("play death animation");
@@ -286,14 +316,6 @@ dialog.onPoorChoiceMade = () => {
               )
             );
           }
-
-          //   if (dead == false && hitInFace.playing == false) {
-          //     log("play hit in face looping false");
-          //     hitInFace.reset();
-          //     //hitInFace.playing = true;
-          //     hitInFace.play();
-          //     hitInFace.looping = false;
-          //   }
         } else {
           log("grab the key from the corpse");
         }
@@ -316,11 +338,31 @@ dialog.onPoorChoiceMade = () => {
     });
   }
 
+  function resolveAfter10Seconds() {
+    return new Promise(resolve => {
+      brute.addComponentOrReplace(
+        new utils.Delay(100000, () => {
+          resolve("resolved after ten");
+        })
+      );
+    });
+  }
+
   async function asyncCall() {
-    log("calling");
+    log("calling asyncCall to kill time");
     var result = await resolveAfter2Seconds();
     clicked = false;
-    log("clicked is false");
+    log("clicked is now false");
+    log(result);
+    // expected output: 'resolved'
+  }
+
+  async function longAsyncCall() {
+    log("calling long asyncCall to kill time");
+    var result = await resolveAfter10Seconds();
+    //clicked = false;
+    spinAttack.stop();
+    log("spinAttack is now sopped");
     log(result);
     // expected output: 'resolved'
   }
@@ -423,18 +465,18 @@ function distance(pos1: Vector3, pos2: Vector3): number {
 }
 
 function spawnLoot() {
-  const _scene = new Entity('_scene')
-  engine.addEntity(_scene)
-  const transform = new Transform({
-  position: new Vector3(0, 0, 0),
-  rotation: new Quaternion(0, 0, 0, 1),
-  scale: new Vector3(1, 1, 1)
-  })
+  // const _scene = new Entity('_scene')
+  // engine.addEntity(_scene)
+  // const transform = new Transform({
+  // position: new Vector3(0, 0, 0),
+  // rotation: new Quaternion(0, 0, 0, 1),
+  // scale: new Vector3(1, 1, 1)
+  // })
 
-  _scene.addComponentOrReplace(transform)
+  //_scene.addComponentOrReplace(transform)
   const fantasyChest = new Entity("fantasyChest");
   engine.addEntity(fantasyChest);
-  fantasyChest.setParent(_scene);
+  //fantasyChest.setParent(_scene);
   const transform3 = new Transform({
     position: new Vector3(6, 0.4, 6.5),
     rotation: new Quaternion(0, 0, 0, 1),
@@ -444,7 +486,7 @@ function spawnLoot() {
 
   const fantasyIronKey = new Entity("fantasyIronKey");
   engine.addEntity(fantasyIronKey);
-  fantasyIronKey.setParent(_scene);
+  //fantasyIronKey.setParent(_scene);
   const transform4 = new Transform({
     position: new Vector3(6, 0.4, 7.5),
     rotation: new Quaternion(0, 0, 0, 1),
@@ -454,7 +496,7 @@ function spawnLoot() {
 
   const scroll = new Entity("scroll");
   engine.addEntity(scroll);
-  scroll.setParent(_scene);
+  //scroll.setParent(_scene);
   const transform5 = new Transform({
     position: new Vector3(6.5, 0.4, 6.5),
     rotation: new Quaternion(0, 0, 0, 1),
