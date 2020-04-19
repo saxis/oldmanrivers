@@ -1,6 +1,6 @@
 import { BaseScene } from "./gameObjects/baseScene";
 import resources from "./resources";
-import { PeasantDialog } from "./ui/index";
+import { PeasantDialog, SecondDialog } from "./ui/index";
 import { Npc } from "./gameObjects/npc";
 //import { BuilderHUD } from "./modules/BuilderHUD";
 import { spawnEntity } from "./modules/SpawnerFunctions";
@@ -11,6 +11,7 @@ import { createInventory } from "../node_modules/decentraland-builder-scripts/in
 import Script1 from "../ff9257ec-9d62-404f-97c7-cf19c4035761/src/item";
 import Script2 from "../7402ef02-fc7f-4e19-b44a-4613ee2526c5/src/item";
 import Script3 from "../df8d742f-045c-4fe3-8c70-adfb47d22baf/src/item";
+import Script4 from "../swordScript/src/item";
 //import { getUserData } from "@decentraland/Identity";
 
 let baseScene = new BaseScene();
@@ -41,12 +42,19 @@ instructions.vAlign = "center";
 instructions.visible = false;
 
 const dialog = new PeasantDialog(gameCanvas);
+const seconddialog = new SecondDialog(gameCanvas)
 
 const soundbox2 = new Entity();
 soundbox2.addComponent(new Transform());
 soundbox2.getComponent(Transform).position.set(7, 0, 8);
 soundbox2.addComponent(new AudioSource(resources.sounds.evillaugh));
 engine.addEntity(soundbox2);
+
+const soundbox3 = new Entity();
+soundbox3.addComponent(new Transform());
+soundbox3.getComponent(Transform).position.set(7,1,8);
+soundbox3.addComponent(new AudioSource(resources.sounds.playerHit2));
+engine.addEntity(soundbox3);
 
 const grassBase = new Entity("grass");
     const grassShape = new GLTFShape(
@@ -232,6 +240,7 @@ dialog.onPoorChoiceMade = () => {
             log('stopping spinattack after long asyncall')
             //spinAttack.stop();
 
+            soundbox3.getComponent(AudioSource).playOnce()
             PLAYER_HP--;
             text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
             log("PLAYER HP is now: ", PLAYER_HP);
@@ -307,11 +316,12 @@ dialog.onPoorChoiceMade = () => {
                   //soundbox2.getComponent(AudioSource).playOnce()
                   //text.value = "I have lost?"
                   spawnLoot();
+                  respawnRivers();
                 },
                 {
                   button: ActionButton.PRIMARY,
                   showFeeback: true,
-                  hoverText: "Loot the corpse"
+                  hoverText: "Locate the loot chest key"
                 }
               )
             );
@@ -464,21 +474,29 @@ function distance(pos1: Vector3, pos2: Vector3): number {
   return a * a + b * b;
 }
 
-function spawnLoot() {
-  // const _scene = new Entity('_scene')
-  // engine.addEntity(_scene)
-  // const transform = new Transform({
-  // position: new Vector3(0, 0, 0),
-  // rotation: new Quaternion(0, 0, 0, 1),
-  // scale: new Vector3(1, 1, 1)
-  // })
+function respawnRivers() {
+  engine.addEntity(oldmanrivers);
+  riversWalkClip.play();
+  oldmanrivers.addComponent(
+    new OnPointerDown(
+      e => {
+        seconddialog.run();
+      },
+      {
+        button: ActionButton.PRIMARY,
+        showFeeback: true,
+        hoverText: "Speak to Old Man Rivers"
+      }
+    )
+  );
 
-  //_scene.addComponentOrReplace(transform)
+}
+
+function spawnLoot() {
   const fantasyChest = new Entity("fantasyChest");
   engine.addEntity(fantasyChest);
-  //fantasyChest.setParent(_scene);
   const transform3 = new Transform({
-    position: new Vector3(6, 0.4, 6.5),
+    position: new Vector3(6, 0, 6.5),
     rotation: new Quaternion(0, 0, 0, 1),
     scale: new Vector3(1, 1, 1)
   });
@@ -486,7 +504,6 @@ function spawnLoot() {
 
   const fantasyIronKey = new Entity("fantasyIronKey");
   engine.addEntity(fantasyIronKey);
-  //fantasyIronKey.setParent(_scene);
   const transform4 = new Transform({
     position: new Vector3(6, 0.4, 7.5),
     rotation: new Quaternion(0, 0, 0, 1),
@@ -496,9 +513,8 @@ function spawnLoot() {
 
   const scroll = new Entity("scroll");
   engine.addEntity(scroll);
-  //scroll.setParent(_scene);
   const transform5 = new Transform({
-    position: new Vector3(6.5, 0.4, 6.5),
+    position: new Vector3(6.5, 0.2, 6.5),
     rotation: new Quaternion(0, 0, 0, 1),
     scale: new Vector3(1, 1, 1)
   });
@@ -508,7 +524,7 @@ function spawnLoot() {
   engine.addEntity(oldIronSword);
   oldIronSword.setParent(baseScene);
   const transform6 = new Transform({
-    position: new Vector3(6, 0.4, 6.5),
+    position: new Vector3(6, 0.3, 6.5),
     rotation: new Quaternion(
       -7.781870092739773e-16,
       0.7071068286895752,
@@ -518,10 +534,7 @@ function spawnLoot() {
     scale: new Vector3(1.000008225440979, 1, 0.5000041127204895)
   });
   oldIronSword.addComponentOrReplace(transform6);
-  const gltfShape2 = new GLTFShape("models/Sword_02/Sword_02.glb");
-  gltfShape2.withCollisions = true;
-  gltfShape2.visible = true;
-  oldIronSword.addComponentOrReplace(gltfShape2);
+  
 
   const channelId = Math.random()
     .toString(16)
@@ -533,34 +546,46 @@ function spawnLoot() {
   const script1 = new Script1();
   const script2 = new Script2();
   const script3 = new Script3();
+  const script4 = new Script4();
   script1.init();
   script2.init(options);
   script3.init();
+  script4.init(options);
+
   script1.spawn(
     fantasyChest,
     { onClickText: "Use the Key", onClick: [], onOpen: [], onClose: [] },
     createChannel(channelId, fantasyChest, channelBus)
   );
+
   script2.spawn(
     fantasyIronKey,
     {
       target: "fantasyChest",
-      respawns: true,
+      respawns: false,
       onEquip: [],
       onUse: [{ entityName: "fantasyChest", actionId: "toggle", values: {} }]
     },
     createChannel(channelId, fantasyIronKey, channelBus)
   );
+
+
   script3.spawn(
     scroll,
-    { "text": "You have received Scroll of Weak Fireball", "fontSize": 36 },
+    { "text": "You have received Scroll of Weak Fireball", "fontSize": 24 },
     createChannel(channelId, scroll, channelBus)
   );
 
-  engine.addEntity(fantasyChest)
-  engine.addEntity(fantasyIronKey)
-  engine.addEntity(scroll)
-  engine.addEntity(oldIronSword)
+  script4.spawn(
+    oldIronSword,
+    {
+      target: "fantasyChest",
+      respawns: false,
+      onEquip: [],
+      onUse: [{entityName: "fantasyChest", actionId: "toggle", values: {}}]
+    },
+    createChannel(channelId, oldIronSword, channelBus)
+  )
 }
 
 

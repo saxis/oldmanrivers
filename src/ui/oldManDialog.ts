@@ -54,7 +54,7 @@ export class PeasantDialog extends SimpleDialog {
         positionY: "-75%",
         background: resources.textures.blueContainer,
         backgroundConfig: {sourceWidth: 200, sourceHeight: 70},
-        optionsTextConfig: { fontSize: 22, paddingLeft: 20, positionY: "-60%" }
+        optionsTextConfig: { fontSize: 22, paddingLeft: 20, positionY: "-60%", color: Color4.Black()}
       }
     });
 
@@ -79,7 +79,7 @@ export class PeasantDialog extends SimpleDialog {
         )
           .beginOptionsGroup()
             .option(() => "> What kind of visitors?")
-              .say(() => 'You say, "What kind of visitors?"', { color: playerColor })
+              .say(() => 'You say, "What kind of visitors?"', { color: npcColor })
               .say(
                 () =>
                 'Old Man Rivers says, "Adventurers like yourself. Anyway, I\'m relaxing since the incident with [Agatha]."',
@@ -88,7 +88,7 @@ export class PeasantDialog extends SimpleDialog {
                 .beginOptionsGroup()
                   .option(() => "> Who is Agatha?")
                     .say(() => 'You say, "Who is Agatha? What are you talking about Old Man?"', {
-                      color: playerColor
+                      color: npcColor
                     })
                     .say(
                       () =>
@@ -97,7 +97,7 @@ export class PeasantDialog extends SimpleDialog {
                     )
                       .beginOptionsGroup()
                         .option(() => "> Why did the Council have to do that?")
-                          .say(() => 'You say, "Why did the Council have to imprison her?"', { color: playerColor })
+                          .say(() => 'You say, "Why did the Council have to imprison her?"', { color: npcColor })
                           .say(
                             () =>
                             'Old Man Rivers says, "Sometimes its the only choice lad. We did what we thought was best."',
@@ -112,7 +112,7 @@ export class PeasantDialog extends SimpleDialog {
                           .call(() =>  this.onDialogEnded())
                         .endOption()
                         .option(() => "> Sometimes you have to do what you have to do.")
-                          .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: playerColor})
+                          .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: npcColor })
                           .say(
                             () =>
                             'Old Man Rivers says, "Indeed. Fare thee well adventurer. Safe travels."',
@@ -123,7 +123,7 @@ export class PeasantDialog extends SimpleDialog {
                       .endOptionsGroup()
                   .endOption()
                   .option(() => "> I don't care about this at all.")
-                    .say(() => 'You say, "I do not have time for this right now".', {color: playerColor})
+                    .say(() => 'You say, "I do not have time for this right now".', {color: npcColor })
                     .say(
                       () =>
                       'Old Man Rivers says, "No problem. Fare well adventurer. Safe travels."',
@@ -135,7 +135,7 @@ export class PeasantDialog extends SimpleDialog {
                 .endOptionsGroup()
             .endOption()
             .option(() => "> Lets talk some other time.")
-              .say(() => 'You say, "I do not have time for this right now".', {color: playerColor})
+              .say(() => 'You say, "I do not have time for this right now".', {color: npcColor })
               .say(
                 () =>
                 'Old Man Rivers says, "No problem. Fare well adventurer. Safe travels."',
@@ -150,17 +150,17 @@ export class PeasantDialog extends SimpleDialog {
       .say(() => 'Old Man Rivers says, "Hello again. Did that old witch send you back here?"')
       .beginOptionsGroup()
       .option(() => "> She did. I want to free her, she said she would reward me!")
-        .say(() => 'You say, "She promised me some treasure. Now how do I get past the crystals Old Man?"', { color: playerColor })
+        .say(() => 'You say, "She promised me some treasure. Now how do I get past the crystals Old Man?"', { color: npcColor })
         .say(() => 'Old Man Rivers say, "You\'ve made a poor choice. I\'ve sent for my son. After you and he have a chat we can talk crystals."', {color: npcColor})
         .call(() =>  this.onPoorChoiceMade())
       .endOption()
       .option(() => "> No. I just wanted to say hello again.")
-      .say(() => 'You say, "No, I just wanted to say hello sir".', {color: playerColor})
+      .say(() => 'You say, "No, I just wanted to say hello sir".', {color: npcColor })
       .say(() => 'Old Man Rivers says, "Ah. I understand. Good to see you as well adventurer."', { color: npcColor})
       .call(() =>  this.onDialogEnded())
       .endOption()
       .option(() => "> No. I was not able to find Agatha.")
-      .say(() => 'You say, "No, I was not able to find her".', {color: playerColor})
+      .say(() => 'You say, "No, I was not able to find her".', {color: npcColor })
       .say(() => 'Old Man Rivers says, "Ah. I see. She is 9 parcels or so to the East, just in front of the Mystery Castle."', { color: npcColor}) 
       .call(() =>  this.onDialogEnded())
       .endOption()
