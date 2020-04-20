@@ -1,16 +1,11 @@
 import resources from "../resources";
 import { SimpleDialog } from "../modules/simpleDialog";
-//import { DoorState } from "../gameObjects/doorState";
 import utils from "../../node_modules/decentraland-ecs-utils/index";
 
-function selectRandom(options: string[]): string {
-  return options[Math.floor(Math.random() * (options.length - 1))];
-}
 
 export class PeasantDialog extends SimpleDialog {
   private dialogTree: SimpleDialog.DialogTree;
 
-  public onCorrectAnswer: (questionId: number) => void;
   public onSequenceComplete: () => void;
   public onPoorChoiceMade: () => void;
   public onDialogStarted: () => void;
@@ -41,7 +36,7 @@ export class PeasantDialog extends SimpleDialog {
         textSpeed: 5,
         textIdleTime: 2,
         textConfig: { fontSize: 18, paddingLeft: 25, paddingRight: 25 },
-        background: resources.textures.blueContainer,
+        background: resources.textures.grayContainer,
         backgroundConfig: { sourceWidth: 200, sourceHeight: 70 }
       },
       optionsContainer: {
@@ -52,7 +47,7 @@ export class PeasantDialog extends SimpleDialog {
         vAlign: "top",
         hAlign: "center",
         positionY: "-75%",
-        background: resources.textures.blueContainer,
+        background: resources.textures.grayContainer,
         backgroundConfig: {sourceWidth: 200, sourceHeight: 70},
         optionsTextConfig: { fontSize: 22, paddingLeft: 20, positionY: "-60%", color: Color4.Black()}
       }
@@ -104,7 +99,7 @@ export class PeasantDialog extends SimpleDialog {
                             { color: npcColor }
                           )
                           .say(() => 
-                            'Old Man Rivers says, "She is out to the East if you want to get a good look at her. Over by the mystery castle where maybe the king can keep an eye on her."', { color: npcColor})
+                            'Old Man Rivers says, "She is out to the East if you want to get a good look at her. Over by the Mystery castle. Maybe the king can keep an eye on her."', { color: npcColor})
                           //.say(() => 'Old Man Rivers says, "Over by the magic castle where maybe the king can keep an eye on her."', {color:npcColor})
                           .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies. Come and speak to me again once you have had a look at her."', {color: npcColor})
                           //.say(() => 'Old Man Rivers says, "Come and speak to me again once you have had a look at her."',{color: npcColor})

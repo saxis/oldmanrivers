@@ -2,7 +2,7 @@ import { BaseScene } from "./gameObjects/baseScene";
 import resources from "./resources";
 import { PeasantDialog, SecondDialog } from "./ui/index";
 import { Npc } from "./gameObjects/npc";
-//import { BuilderHUD } from "./modules/BuilderHUD";
+import { BuilderHUD } from "./modules/BuilderHUD";
 import { spawnEntity } from "./modules/SpawnerFunctions";
 //import { CreateOutside } from "./gameObjects/outside";
 import utils from "../node_modules/decentraland-ecs-utils/index";
@@ -71,7 +71,7 @@ const grassBase = new Entity("grass");
     grassBase.addComponent(new AudioSource(resources.sounds.birdsong));
     grassBase.getComponent(AudioSource).playOnce();
     grassBase.addComponent(
-      new utils.Delay(80000, () => {
+      new utils.Delay(1600000, () => {
         log("After 3 minute delay playing song again")
         grassBase.getComponent(AudioSource).playOnce();
       })
@@ -149,6 +149,22 @@ const salute = new AnimationState("salute");
 oldmanriversAnimator.addClip(salute);
 
 oldmanrivers.addComponent(new LerpData());
+
+seconddialog.onSecondSequenceComplete = () => {
+  log("in onSecondSequenceComplete")
+}
+
+seconddialog.onSecondSequenceComplete = () => {
+  log("in on secondPoorChoiceMade")
+}
+
+seconddialog.onSecondDialogStarted = () => {
+  oldmanrivers.getComponent(OnPointerDown).showFeeback = false; 
+}
+
+seconddialog.onSecondDialogEnded = () => {
+  oldmanrivers.getComponent(OnPointerDown).showFeeback = true; 
+}
 
 dialog.onDialogStarted = () => {
   oldmanrivers.getComponent(OnPointerDown).showFeeback = false;
@@ -309,26 +325,20 @@ dialog.onPoorChoiceMade = () => {
             deathFromFront.play();
             //deathFromFront.playing = true;
             deathFromFront.looping = false;
-            //lantern_lit3.getComponent(utils.ToggleComponent).toggle();
             brute.addComponentOrReplace(
               new OnPointerDown(
                 e => {
-                  //soundbox2.getComponent(AudioSource).playOnce()
-                  //text.value = "I have lost?"
                   spawnLoot();
-                  respawnRivers();
                 },
                 {
                   button: ActionButton.PRIMARY,
                   showFeeback: true,
-                  hoverText: "Locate the loot chest key"
+                  hoverText: "Loot corpse."
                 }
               )
             );
           }
-        } else {
-          log("grab the key from the corpse");
-        }
+        } 
       },
       {
         button: ActionButton.PRIMARY,
@@ -475,9 +485,9 @@ function distance(pos1: Vector3, pos2: Vector3): number {
 }
 
 function respawnRivers() {
-  engine.addEntity(oldmanrivers);
-  riversWalkClip.play();
-  oldmanrivers.addComponent(
+  engine.addEntity(oldmanrivers)
+
+  oldmanrivers.addComponentOrReplace(
     new OnPointerDown(
       e => {
         seconddialog.run();
@@ -489,6 +499,21 @@ function respawnRivers() {
       }
     )
   );
+  // engine.addEntity(oldmanrivers);
+  // riversWalkClip.play();
+  // //engine.removeEntity(brute);
+  // oldmanrivers.addComponent(
+  //   new OnPointerDown(
+  //     e => {
+  //       seconddialog.run();
+  //     },
+  //     {
+  //       button: ActionButton.PRIMARY,
+  //       showFeeback: true,
+  //       hoverText: "Speak to Old Man Rivers"
+  //     }
+  //   )
+  // );
 
 }
 
@@ -505,7 +530,7 @@ function spawnLoot() {
   const fantasyIronKey = new Entity("fantasyIronKey");
   engine.addEntity(fantasyIronKey);
   const transform4 = new Transform({
-    position: new Vector3(6, 0.4, 7.5),
+    position: new Vector3(6, 0, 7.5),
     rotation: new Quaternion(0, 0, 0, 1),
     scale: new Vector3(1, 1, 1)
   });
@@ -586,11 +611,14 @@ function spawnLoot() {
     },
     createChannel(channelId, oldIronSword, channelBus)
   )
+
+  // const hud: BuilderHUD = new BuilderHUD();
+  // hud.attachToEntity(fantasyIronKey)
+
+  respawnRivers();
 }
 
 
 const leaves = spawnEntity(16,0,0,  0,0,0,  1,1,1)
 leaves.addComponentOrReplace(resources.models.animatedleaves)
 
-//const hud: BuilderHUD = new BuilderHUD();
-//hud.attachToEntity(leaves)

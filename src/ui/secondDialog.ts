@@ -1,20 +1,15 @@
 import resources from "../resources";
 import { SimpleDialog } from "../modules/simpleDialog";
-//import { DoorState } from "../gameObjects/doorState";
 import utils from "../../node_modules/decentraland-ecs-utils/index";
 
-function selectRandom(options: string[]): string {
-  return options[Math.floor(Math.random() * (options.length - 1))];
-}
 
 export class SecondDialog extends SimpleDialog {
   private dialogTree: SimpleDialog.DialogTree;
 
-  public onCorrectAnswer: (questionId: number) => void;
-  public onSequenceComplete: () => void;
-  public onPoorChoiceMade: () => void;
-  public onDialogStarted: () => void;
-  public onDialogEnded: () => void;
+  public onSecondSequenceComplete: () => void;
+  public onSecondPoorChoiceMade: () => void;
+  public onSecondDialogStarted: () => void;
+  public onSecondDialogEnded: () => void;
 
   constructor(gameCanvas: UICanvas) {
     // Create a new SimpleDialog to manage the dialog tree
@@ -41,7 +36,7 @@ export class SecondDialog extends SimpleDialog {
         textSpeed: 5,
         textIdleTime: 2,
         textConfig: { fontSize: 18, paddingLeft: 25, paddingRight: 25 },
-        background: resources.textures.blueContainer,
+        background: resources.textures.grayContainer,
         backgroundConfig: { sourceWidth: 200, sourceHeight: 70 }
       },
       optionsContainer: {
@@ -52,7 +47,7 @@ export class SecondDialog extends SimpleDialog {
         vAlign: "top",
         hAlign: "center",
         positionY: "-75%",
-        background: resources.textures.blueContainer,
+        background: resources.textures.grayContainer,
         backgroundConfig: {sourceWidth: 200, sourceHeight: 70},
         optionsTextConfig: { fontSize: 22, paddingLeft: 20, positionY: "-60%", color: Color4.Black()}
       }
@@ -69,7 +64,7 @@ export class SecondDialog extends SimpleDialog {
   
 
     this.dialogTree = new SimpleDialog.DialogTree()
-      .call(() =>  this.onDialogStarted())
+      .call(() =>  this.onSecondDialogStarted())
       .if(() => firstTimeDialog)
         .call(() => (firstTimeDialog = false))
         .say(
@@ -108,8 +103,8 @@ export class SecondDialog extends SimpleDialog {
                           //.say(() => 'Old Man Rivers says, "Over by the magic castle where maybe the king can keep an eye on her."', {color:npcColor})
                           .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies. Come and speak to me again once you have had a look at her."', {color: npcColor})
                           //.say(() => 'Old Man Rivers says, "Come and speak to me again once you have had a look at her."',{color: npcColor})
-                          .call(() => this.onSequenceComplete())
-                          .call(() =>  this.onDialogEnded())
+                          .call(() => this.onSecondSequenceComplete())
+                          .call(() =>  this.onSecondDialogEnded())
                         .endOption()
                         .option(() => "> Sometimes you have to do what you have to do.")
                           .say(() => 'You say, "Sometimes you have to do what you have to do".', {color: npcColor })
@@ -118,7 +113,7 @@ export class SecondDialog extends SimpleDialog {
                             'Old Man Rivers says, "Indeed. Fare thee well adventurer. Safe travels."',
                             { color: npcColor }
                           )
-                          .call(() =>  this.onDialogEnded())
+                          .call(() =>  this.onSecondDialogEnded())
                         .endOption()
                       .endOptionsGroup()
                   .endOption()
@@ -130,7 +125,7 @@ export class SecondDialog extends SimpleDialog {
                       { color: npcColor }
                     )
                     .call(() => (firstTimeDialog = true))
-                    .call(() =>  this.onDialogEnded())
+                    .call(() =>  this.onSecondDialogEnded())
                   .endOption()
                 .endOptionsGroup()
             .endOption()
@@ -142,7 +137,7 @@ export class SecondDialog extends SimpleDialog {
                 { color: npcColor }
               )
               .call(() => (firstTimeDialog = true))
-              .call(() =>  this.onDialogEnded())
+              .call(() =>  this.onSecondDialogEnded())
             .endOption()
           .endOptionsGroup()
       .else()
@@ -152,22 +147,22 @@ export class SecondDialog extends SimpleDialog {
       .option(() => "> She did. I want to free her, she said she would reward me!")
         .say(() => 'You say, "She promised me some treasure. Now how do I get past the crystals Old Man?"', { color: npcColor })
         .say(() => 'Old Man Rivers say, "You\'ve made a poor choice. I\'ve sent for my son. After you and he have a chat we can talk crystals."', {color: npcColor})
-        .call(() =>  this.onPoorChoiceMade())
+        .call(() =>  this.onSecondPoorChoiceMade())
       .endOption()
       .option(() => "> No. I just wanted to say hello again.")
       .say(() => 'You say, "No, I just wanted to say hello sir".', {color: npcColor })
       .say(() => 'Old Man Rivers says, "Ah. I understand. Good to see you as well adventurer."', { color: npcColor})
-      .call(() =>  this.onDialogEnded())
+      .call(() =>  this.onSecondDialogEnded())
       .endOption()
       .option(() => "> No. I was not able to find Agatha.")
       .say(() => 'You say, "No, I was not able to find her".', {color: npcColor })
       .say(() => 'Old Man Rivers says, "Ah. I see. She is 9 parcels or so to the East, just in front of the Mystery Castle."', { color: npcColor}) 
-      .call(() =>  this.onDialogEnded())
+      .call(() =>  this.onSecondDialogEnded())
       .endOption()
       .endOptionsGroup()
       .else()
       .say(() => 'Old Man Rivers says, "Hello adventurer."')
-      .call(() =>  this.onDialogEnded())
+      .call(() =>  this.onSecondDialogEnded())
       .endif()
       .endif();
   }
