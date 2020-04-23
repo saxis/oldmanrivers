@@ -80,7 +80,7 @@ const grassBase = new Entity("grass");
 
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
-  resources.models.peasant,
+  resources.models.paladin,
   5
 );
 oldmanrivers.addComponent(
@@ -136,17 +136,28 @@ let oldmanriversAnimator = new Animator();
 oldmanrivers.addComponent(oldmanriversAnimator);
 
 //Add walk animation
-const riversWalkClip = new AnimationState("walk");
+const riversWalkClip = new AnimationState("walking");
 oldmanriversAnimator.addClip(riversWalkClip);
-const turnRClip = new AnimationState("turnLeft");
+
+const turnRClip = new AnimationState("rightTurn")
+oldmanriversAnimator.addClip(turnRClip)
 turnRClip.looping = false;
-oldmanriversAnimator.addClip(turnRClip);
-const raiseDeadClip = new AnimationState("salute");
+
+const turnLClip = new AnimationState("turnLeft")
+oldmanriversAnimator.addClip(turnLClip)
+turnLClip.looping = false;
+
+const raiseDeadClip = new AnimationState("talk");
 oldmanriversAnimator.addClip(raiseDeadClip);
-const unlockSpell = new AnimationState("unlockSpell");
+
+const unlockSpell = new AnimationState("salute");
 oldmanriversAnimator.addClip(unlockSpell);
-const salute = new AnimationState("salute");
+
+const salute = new AnimationState("fightIdle");
 oldmanriversAnimator.addClip(salute);
+
+const boxing = new AnimationState("boxing");
+oldmanriversAnimator.addClip(boxing)
 
 oldmanrivers.addComponent(new LerpData());
 
@@ -390,7 +401,7 @@ dialog.onPoorChoiceMade = () => {
 };
 
 dialog.onSequenceComplete = () => {
-  riversWalkClip.pause();
+  //riversWalkClip.pause();
   log("in onSequenceCompleted");
   log("trying to play unlock Spell animation");
   unlockSpell.play();
@@ -398,6 +409,8 @@ dialog.onSequenceComplete = () => {
   log("trying to play salute animation");
   salute.play();
   salute.looping = false;
+  salute.stop();
+  //riversWalkClip.play();
 };
 
 riversWalkClip.play();

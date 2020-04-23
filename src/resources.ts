@@ -22,6 +22,7 @@ export default {
         grassblades: new GLTFShape("models/grass_glb.glb"),
         brute: new GLTFShape("models/BruteAnimated6.glb"),
         peasant: new GLTFShape("models/peasantAnimated2.glb"),
+        paladin: new GLTFShape("models/paladin4.glb")
     },
     textures: {
         textContainer: new Texture("src/images/dialogs/textContainer.png"),
