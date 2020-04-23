@@ -23,6 +23,7 @@ let HIT_POINTS = 50;
 let PLAYER_HP = 50;
 let brutedead = false;
 let playerdead = false;
+let battle = false;
 
 const gameCanvas = new UICanvas();
 const text = new UIText(gameCanvas);
@@ -97,8 +98,6 @@ oldmanrivers.addComponent(
 );
 
 
-
-
 // //model stuff
 const point1 = new Vector3(12, 0, 5);
 const point2 = new Vector3(13, 0, 14);
@@ -147,14 +146,14 @@ const turnLClip = new AnimationState("turnLeft")
 oldmanriversAnimator.addClip(turnLClip)
 turnLClip.looping = false;
 
-const raiseDeadClip = new AnimationState("talk");
-oldmanriversAnimator.addClip(raiseDeadClip);
+const talkingClip = new AnimationState("talk");
+oldmanriversAnimator.addClip(talkingClip);
 
-const unlockSpell = new AnimationState("salute");
-oldmanriversAnimator.addClip(unlockSpell);
-
-const salute = new AnimationState("fightIdle");
+const salute = new AnimationState("salute");
 oldmanriversAnimator.addClip(salute);
+
+const fightIdle = new AnimationState("fightIdle");
+oldmanriversAnimator.addClip(fightIdle);
 
 const boxing = new AnimationState("boxing");
 oldmanriversAnimator.addClip(boxing)
@@ -185,240 +184,129 @@ dialog.onDialogEnded = () => {
   oldmanrivers.getComponent(OnPointerDown).showFeeback = true;
 }
 
+function resolveAfter10Seconds() {
+  return new Promise(resolve => {
+    oldmanrivers.addComponentOrReplace(
+      new utils.Delay(100000, () => {
+        resolve("resolved after ten");
+      })
+    );
+  });
+}
+
+async function longAsyncCall() {
+  //log("calling long asyncCall to kill time");
+  var result = await resolveAfter10Seconds();
+  //log('setting clicked to false')
+  clicked = false;
+  //spinAttack.stop();
+  //log("spinAttack is now sopped");
+  //log(result);
+  // expected output: 'resolved'
+}
+
 dialog.onPoorChoiceMade = () => {
-  log("In on Poor choice made");
-  engine.removeEntity(oldmanrivers);
+  //log("In on Poor choice made");
+  battle = true;
   grassBase.getComponent(AudioSource).volume = 0;
   lantern.getComponent(AudioSource).playOnce();
 
-  const brute = new Npc(resources.sounds.fighterhit, resources.models.brute, 5);
-  let fighterAnimator = new Animator();
-  brute.addComponent(fighterAnimator);
+  //log('set talkingClip to false')
+  talkingClip.playing = false;
+
+  //log('playing fightIdle')
+  fightIdle.play();
+
   text.visible = true;
 
-  //Add walk animation
-  const bruteWalkClip = new AnimationState("walk");
-  fighterAnimator.addClip(bruteWalkClip);
-  const turnRClip = new AnimationState("turnRight");
-  turnRClip.looping = false;
-  fighterAnimator.addClip(turnRClip);
-  const spinAttack = new AnimationState("swipeAttack");
-  fighterAnimator.addClip(spinAttack);
-  const hitInFace = new AnimationState("hitInHead");
-  fighterAnimator.addClip(hitInFace);
-  const deathFromFront = new AnimationState("deathFromFront");
-  fighterAnimator.addClip(deathFromFront);
-  const taunt = new AnimationState("taunt");
-  fighterAnimator.addClip(taunt);
-  brute.addComponent(new LerpData());
-
-  bruteWalkClip.play();
-
-  class BruteWalk {
-    update(dt: number) {
-      if (!brute.hasComponent(TimeOut) && !spinAttack.playing && !dead) {
-        let transform = brute.getComponent(Transform);
-        let path = brute.getComponent(LerpData);
-        bruteWalkClip.playing = true;
-        turnRClip.playing = false;
-        if (path.fraction < 1) {
-          path.fraction += dt / 12;
-          transform.position = Vector3.Lerp(
-            path.array[path.origin],
-            path.array[path.target],
-            path.fraction
-          );
-        } else {
-          path.origin = path.target;
-          path.target += 1;
-          if (path.target >= path.array.length) {
-            path.target = 0;
-          }
-          path.fraction = 0;
-          transform.lookAt(path.array[path.target]);
-          bruteWalkClip.pause();
-          turnRClip.play();
-          turnRClip.looping = false;
-          brute.addComponent(new TimeOut(TURN_TIME));
-        }
-      }
-    }
-  }
-
-  engine.addSystem(new BruteWalk());
-
-  class BruteBattleCry {
-    update() {
-      let transform = brute.getComponent(Transform);
-      let path = brute.getComponent(LerpData);
-      let dist = distance(transform.position, camera.position);
-      if (dist < 16) {
-        if (!dead && !clicked) {
-          if (spinAttack.playing == false) {
-            spinAttack.reset();
-            log('Starting to play the spinAttack')
-            spinAttack.play();
-            //spinAttack.playing = true;
-            bruteWalkClip.playing = false;
-            turnRClip.playing = false;
-            hitInFace.playing = false;
-
-            longAsyncCall();
-            log('stopping spinattack after long asyncall')
-            //spinAttack.stop();
-
-            soundbox3.getComponent(AudioSource).playOnce()
-            PLAYER_HP--;
-            text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
-            log("PLAYER HP is now: ", PLAYER_HP);
-            
-            if (PLAYER_HP == 0) {
-              log("play dead music.. Kick player out of the scene");
-              soundbox2.getComponent(AudioSource).playOnce();
-
-              text.visible = false;
-              instructions.visible = true;
-
-              brute.addComponentOrReplace(
-                new utils.Delay(2000, () => {
-                  playerdead = true;
-                  engine.removeEntity(brute);
-                })
-              );
-            }
-          } else {
-            log('spinAttack is playing already')
-          }
-        }
-        let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
-        transform.lookAt(playerPos);
-      } else if (spinAttack.playing) {
-        spinAttack.stop();
-        transform.lookAt(path.array[path.target]);
-      }
-    }
-  }
-
-  engine.addSystem(new BruteBattleCry());
-
-  
-
- 
-  brute.addComponent(
+  oldmanrivers.addComponentOrReplace(
     new OnPointerDown(
       e => {
         if (!dead) {
-          log("fighter was clicked");
+          //log("rivers was clicked");
           clicked = true;
-
-          asyncCall();
+          //asyncCall();
           //fighter.addComponent(new TimeOut(HIT_TIME));
-          spinAttack.stop();
-          hitInFace.play();
-          bruteWalkClip.playing = false;
-          spinAttack.playing = false;
+          boxing.stop();
+          fightIdle.play();
+          riversWalkClip.playing = false;
+          boxing.playing = false;
           turnRClip.playing = false;
-          deathFromFront.playing = false;
-          hitInFace.looping = false;
-          brute.getComponent(AudioSource).playOnce();
+          //deathFromFront.playing = false;
+          fightIdle.looping = false;
+          oldmanrivers.getComponent(AudioSource).playOnce();
 
           HIT_POINTS = HIT_POINTS - 1;
-          log("hit points is now: ", HIT_POINTS);
+          //log("hit points is now: ", HIT_POINTS);
           text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
 
           if (HIT_POINTS == 0) {
-            log("play death animation");
+            //log("play death animation");
             brutedead = true
-            spinAttack.stop();
-            hitInFace.stop();
-            bruteWalkClip.stop();
+            boxing.stop();
+            fightIdle.stop();
+            riversWalkClip.stop();
             dead = true;
-            deathFromFront.play();
-            //deathFromFront.playing = true;
-            deathFromFront.looping = false;
-            brute.addComponentOrReplace(
-              new OnPointerDown(
-                e => {
-                  spawnLoot();
-                },
-                {
-                  button: ActionButton.PRIMARY,
-                  showFeeback: true,
-                  hoverText: "Loot corpse."
-                }
-              )
-            );
+            talkingClip.play();
           }
         } 
       },
       {
         button: ActionButton.PRIMARY,
         showFeeback: true,
-        hoverText: "Raaaarr!!!!!"
+        hoverText: "Fight Me!!!!!"
       }
     )
   );
 
-  function resolveAfter2Seconds() {
-    return new Promise(resolve => {
-      brute.addComponentOrReplace(
-        new utils.Delay(2000, () => {
-          resolve("resolved");
-        })
-      );
-    });
-  }
+  // function resolveAfter2Seconds() {
+  //   return new Promise(resolve => {
+  //     brute.addComponentOrReplace(
+  //       new utils.Delay(2000, () => {
+  //         resolve("resolved");
+  //       })
+  //     );
+  //   });
+  // }
 
-  function resolveAfter10Seconds() {
-    return new Promise(resolve => {
-      brute.addComponentOrReplace(
-        new utils.Delay(100000, () => {
-          resolve("resolved after ten");
-        })
-      );
-    });
-  }
+  
 
-  async function asyncCall() {
-    log("calling asyncCall to kill time");
-    var result = await resolveAfter2Seconds();
-    clicked = false;
-    log("clicked is now false");
-    log(result);
-    // expected output: 'resolved'
-  }
+  // async function asyncCall() {
+  //   log("calling asyncCall to kill time");
+  //   var result = await resolveAfter2Seconds();
+  //   clicked = false;
+  //   log("clicked is now false");
+  //   log(result);
+  //   // expected output: 'resolved'
+  // }
 
-  async function longAsyncCall() {
-    log("calling long asyncCall to kill time");
-    var result = await resolveAfter10Seconds();
-    //clicked = false;
-    spinAttack.stop();
-    log("spinAttack is now sopped");
-    log(result);
-    // expected output: 'resolved'
-  }
+  
 
 };
 
 dialog.onSequenceComplete = () => {
-  //riversWalkClip.pause();
   log("in onSequenceCompleted");
-  log("trying to play unlock Spell animation");
-  unlockSpell.play();
-  unlockSpell.looping = false;
-  log("trying to play salute animation");
-  salute.play();
-  salute.looping = false;
-  salute.stop();
-  //riversWalkClip.play();
+  talkingClip.pause()
+  //log("trying to play salute animation");
+  //salute.play()
+  //afterSalute()
 };
 
+//log('playing riversWalkClip - 289')
 riversWalkClip.play();
+
+async function afterSalute() {
+  //await salute.play()
+  //salute.looping = false;
+  //log('playing the walk clip after the salute')
+  riversWalkClip.play()
+}
 
 // Walk System
 export class GnarkWalk {
   update(dt: number) {
-    if (!oldmanrivers.hasComponent(TimeOut) && !raiseDeadClip.playing) {
+    if (!oldmanrivers.hasComponent(TimeOut) && !talkingClip.playing && !fightIdle.playing && !boxing.playing) {
+      //log('timeout is false, no animations are playing, so start walking')
       let transform = oldmanrivers.getComponent(Transform);
       let path = oldmanrivers.getComponent(LerpData);
       riversWalkClip.playing = true;
@@ -466,25 +354,102 @@ export class WaitSystem {
 
 engine.addSystem(new WaitSystem());
 
+const fightinterval = new utils.Interval(500, () => {
+  soundbox3.getComponent(AudioSource).playOnce()
+  PLAYER_HP--;
+})
+
 export class BattleCry {
   update() {
     let transform = oldmanrivers.getComponent(Transform);
     let path = oldmanrivers.getComponent(LerpData);
     let dist = distance(transform.position, camera.position);
     if (dist < 16) {
-      if (raiseDeadClip.playing == false) {
-        raiseDeadClip.reset();
-        raiseDeadClip.playing = true;
-        riversWalkClip.playing = false;
-        turnRClip.playing = false;
+      //log('less than 16 away')
+      if(battle){
+        //log('in the battle')
+        if (!dead && !clicked) {
+          //log('not dead and not clicked')
+          if (boxing.playing == false) {
+            //log('boxing is not playing')
+            riversWalkClip.playing = false;
+            turnRClip.playing = false;
+            turnLClip.playing = false;
+            fightIdle.playing = false;
+
+            boxing.reset();
+            //log('Starting to play the boxing, adding looping and playing variables to ssee if he will box now')
+            boxing.play();
+            boxing.looping = true;
+            boxing.playing = true;
+
+            fightinterval
+
+            //spinAttack.playing = true;
+            longAsyncCall();
+            //log('stopping spinattack after long asyncall')
+            //spinAttack.stop();
+  
+            
+            //Set the Value in the HUD for the current HP 
+            text.value = `HP: ${PLAYER_HP}    Rivers HP: ${HIT_POINTS}`;
+            //log("PLAYER HP is now: ", PLAYER_HP);
+            
+            if (PLAYER_HP == 0) {
+              //log("play dead music.. Kick player out of the scene");
+              soundbox2.getComponent(AudioSource).playOnce();
+  
+              text.visible = false;
+              instructions.visible = true;
+  
+              // brute.addComponentOrReplace(
+              //   new utils.Delay(2000, () => {
+              //     playerdead = true;
+              //     engine.removeEntity(brute);
+              //   })
+              // );
+            }
+          } 
+          // else {
+          //   log('boxing is playing already dont do anything else right now ',fightinterval)
+          //   //fightinterval
+          // }
+        } 
+        // else {
+        //   log(`dead ${dead} clicked ${clicked}`)
+        // }
+      } else {
+        if(!battle) {
+          if (talkingClip.playing == false) {
+            //log('less than 16m away, talkingClip is looping')
+            talkingClip.reset();
+            talkingClip.playing = true;
+            riversWalkClip.playing = false;
+            turnRClip.playing = false;
+         }
+        } else {
+          if (fightIdle.playing == false) {
+            //log('less than 16m away, fightIdle is looping')
+            fightIdle.reset();
+            fightIdle.playing = true;
+            riversWalkClip.playing = false;
+            turnRClip.playing = false;
+            talkingClip.playing = false;
+         } 
+        }
+        let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
+        transform.lookAt(playerPos);
       }
-      let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
-      transform.lookAt(playerPos);
-    } else if (raiseDeadClip.playing) {
-      raiseDeadClip.stop();
+      
+    } else if (talkingClip.playing || boxing.playing || fightIdle.playing) {
+      //log('more than 16m away, stopping boxing, talking, fightidling..')
+      talkingClip.stop();
+      boxing.stop();
+      fightIdle.stop();
       transform.lookAt(path.array[path.target]);
     }
   }
+  
 }
 
 engine.addSystem(new BattleCry());
@@ -497,139 +462,123 @@ function distance(pos1: Vector3, pos2: Vector3): number {
   return a * a + b * b;
 }
 
-function respawnRivers() {
-  engine.addEntity(oldmanrivers)
+// function respawnRivers() {
+//   engine.addEntity(oldmanrivers)
 
-  oldmanrivers.addComponentOrReplace(
-    new OnPointerDown(
-      e => {
-        seconddialog.run();
-      },
-      {
-        button: ActionButton.PRIMARY,
-        showFeeback: true,
-        hoverText: "Speak to Old Man Rivers"
-      }
-    )
-  );
-  // engine.addEntity(oldmanrivers);
-  // riversWalkClip.play();
-  // //engine.removeEntity(brute);
-  // oldmanrivers.addComponent(
-  //   new OnPointerDown(
-  //     e => {
-  //       seconddialog.run();
-  //     },
-  //     {
-  //       button: ActionButton.PRIMARY,
-  //       showFeeback: true,
-  //       hoverText: "Speak to Old Man Rivers"
-  //     }
-  //   )
-  // );
+//   oldmanrivers.addComponentOrReplace(
+//     new OnPointerDown(
+//       e => {
+//         seconddialog.run();
+//       },
+//       {
+//         button: ActionButton.PRIMARY,
+//         showFeeback: true,
+//         hoverText: "Speak to Old Man Rivers"
+//       }
+//     )
+//   );
+// }
 
-}
+// function spawnLoot() {
+//   const fantasyChest = new Entity("fantasyChest");
+//   engine.addEntity(fantasyChest);
+//   const transform3 = new Transform({
+//     position: new Vector3(6, 0, 6.5),
+//     rotation: new Quaternion(0, 0, 0, 1),
+//     scale: new Vector3(1, 1, 1)
+//   });
+//   fantasyChest.addComponentOrReplace(transform3);
 
-function spawnLoot() {
-  const fantasyChest = new Entity("fantasyChest");
-  engine.addEntity(fantasyChest);
-  const transform3 = new Transform({
-    position: new Vector3(6, 0, 6.5),
-    rotation: new Quaternion(0, 0, 0, 1),
-    scale: new Vector3(1, 1, 1)
-  });
-  fantasyChest.addComponentOrReplace(transform3);
+//   const fantasyIronKey = new Entity("fantasyIronKey");
+//   engine.addEntity(fantasyIronKey);
+//   const transform4 = new Transform({
+//     position: new Vector3(6, 0, 7.5),
+//     rotation: new Quaternion(0, 0, 0, 1),
+//     scale: new Vector3(1, 1, 1)
+//   });
+//   fantasyIronKey.addComponentOrReplace(transform4);
 
-  const fantasyIronKey = new Entity("fantasyIronKey");
-  engine.addEntity(fantasyIronKey);
-  const transform4 = new Transform({
-    position: new Vector3(6, 0, 7.5),
-    rotation: new Quaternion(0, 0, 0, 1),
-    scale: new Vector3(1, 1, 1)
-  });
-  fantasyIronKey.addComponentOrReplace(transform4);
+//   const scroll = new Entity("scroll");
+//   engine.addEntity(scroll);
+//   const transform5 = new Transform({
+//     position: new Vector3(6.5, 0.2, 6.5),
+//     rotation: new Quaternion(0, 0, 0, 1),
+//     scale: new Vector3(1, 1, 1)
+//   });
+//   scroll.addComponentOrReplace(transform5);
 
-  const scroll = new Entity("scroll");
-  engine.addEntity(scroll);
-  const transform5 = new Transform({
-    position: new Vector3(6.5, 0.2, 6.5),
-    rotation: new Quaternion(0, 0, 0, 1),
-    scale: new Vector3(1, 1, 1)
-  });
-  scroll.addComponentOrReplace(transform5);
-
-  const oldIronSword = new Entity("oldIronSword");
-  engine.addEntity(oldIronSword);
-  oldIronSword.setParent(baseScene);
-  const transform6 = new Transform({
-    position: new Vector3(6, 0.3, 6.5),
-    rotation: new Quaternion(
-      -7.781870092739773e-16,
-      0.7071068286895752,
-      -8.429368136830817e-8,
-      -0.7071068286895752
-    ),
-    scale: new Vector3(1.000008225440979, 1, 0.5000041127204895)
-  });
-  oldIronSword.addComponentOrReplace(transform6);
+//   const oldIronSword = new Entity("oldIronSword");
+//   engine.addEntity(oldIronSword);
+//   oldIronSword.setParent(baseScene);
+//   const transform6 = new Transform({
+//     position: new Vector3(6, 0.3, 6.5),
+//     rotation: new Quaternion(
+//       -7.781870092739773e-16,
+//       0.7071068286895752,
+//       -8.429368136830817e-8,
+//       -0.7071068286895752
+//     ),
+//     scale: new Vector3(1.000008225440979, 1, 0.5000041127204895)
+//   });
+//   oldIronSword.addComponentOrReplace(transform6);
   
 
-  const channelId = Math.random()
-    .toString(16)
-    .slice(2);
-  const channelBus = new MessageBus();
-  const inventory = createInventory(UICanvas, UIContainerStack, UIImage);
-  const options = { inventory };
+//   const channelId = Math.random()
+//     .toString(16)
+//     .slice(2);
+//   const channelBus = new MessageBus();
+//   const inventory = createInventory(UICanvas, UIContainerStack, UIImage);
+//   const options = { inventory };
 
-  const script1 = new Script1();
-  const script2 = new Script2();
-  const script3 = new Script3();
-  const script4 = new Script4();
-  script1.init();
-  script2.init(options);
-  script3.init();
-  script4.init(options);
+//   const script1 = new Script1();
+//   const script2 = new Script2();
+//   const script3 = new Script3();
+//   const script4 = new Script4();
+//   script1.init();
+//   script2.init(options);
+//   script3.init();
+//   script4.init(options);
 
-  script1.spawn(
-    fantasyChest,
-    { onClickText: "Use the Key", onClick: [], onOpen: [], onClose: [] },
-    createChannel(channelId, fantasyChest, channelBus)
-  );
+//   script1.spawn(
+//     fantasyChest,
+//     { onClickText: "Use the Key", onClick: [], onOpen: [], onClose: [] },
+//     createChannel(channelId, fantasyChest, channelBus)
+//   );
 
-  script2.spawn(
-    fantasyIronKey,
-    {
-      target: "fantasyChest",
-      respawns: false,
-      onEquip: [],
-      onUse: [{ entityName: "fantasyChest", actionId: "toggle", values: {} }]
-    },
-    createChannel(channelId, fantasyIronKey, channelBus)
-  );
+//   script2.spawn(
+//     fantasyIronKey,
+//     {
+//       target: "fantasyChest",
+//       respawns: false,
+//       onEquip: [],
+//       onUse: [{ entityName: "fantasyChest", actionId: "toggle", values: {} }]
+//     },
+//     createChannel(channelId, fantasyIronKey, channelBus)
+//   );
 
 
-  script3.spawn(
-    scroll,
-    { "text": "You have received Scroll of Weak Fireball", "fontSize": 24 },
-    createChannel(channelId, scroll, channelBus)
-  );
+//   script3.spawn(
+//     scroll,
+//     { "text": "You have received Scroll of Weak Fireball", "fontSize": 24 },
+//     createChannel(channelId, scroll, channelBus)
+//   );
 
-  script4.spawn(
-    oldIronSword,
-    {
-      target: "fantasyChest",
-      respawns: false,
-      onEquip: [],
-      onUse: [{entityName: "fantasyChest", actionId: "toggle", values: {}}]
-    },
-    createChannel(channelId, oldIronSword, channelBus)
-  )
+//   script4.spawn(
+//     oldIronSword,
+//     {
+//       target: "fantasyChest",
+//       respawns: false,
+//       onEquip: [],
+//       onUse: [{entityName: "fantasyChest", actionId: "toggle", values: {}}]
+//     },
+//     createChannel(channelId, oldIronSword, channelBus)
+//   )
 
-  // const hud: BuilderHUD = new BuilderHUD();
-  // hud.attachToEntity(fantasyIronKey)
+//   // const hud: BuilderHUD = new BuilderHUD();
+//   // hud.attachToEntity(fantasyIronKey)
 
-  respawnRivers();
-}
+//   respawnRivers();
+// }
 
 
 const leaves = spawnEntity(16,0,0,  0,0,0,  1,1,1)

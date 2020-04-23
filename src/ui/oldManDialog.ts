@@ -92,7 +92,7 @@ export class PeasantDialog extends SimpleDialog {
                             { color: npcColor }
                           )
                           .say(() => 
-                            'Old Man Rivers- She is right over there. Go take a look and come back here after if you want. Dont believe her lies though', { color: npcColor})
+                            'Old Man Rivers- She is right over there. Go take a look and come back here after if you want. Dont believe her lies though.', { color: npcColor})
                           .call(() => this.onSequenceComplete())
                           .call(() =>  this.onDialogEnded())
                         .endOption()
@@ -129,7 +129,7 @@ export class PeasantDialog extends SimpleDialog {
       .say(() => 'Old Man Rivers- Hello again. Did that old witch send you back here?')
       .beginOptionsGroup()
       .option(() => "1:- She did. I want to free her, she said she would reward me!")
-        .say(() => 'Old Man Rivers- You\'ve made a poor choice. If you can best me I will tell you about her prison', {color: npcColor})
+        .say(() => 'Old Man Rivers- You\'ve made a poor choice. If you can best me I will tell you about her prison.', {color: npcColor})
         .call(() =>  this.onPoorChoiceMade())
       .endOption()
       .option(() => "2:- No. I just wanted to say hello again.")
