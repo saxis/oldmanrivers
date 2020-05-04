@@ -15,19 +15,27 @@ export default {
         evillaugh: new AudioClip("sounds/crazyChickLaugh.mp3"),
         birdsong: new AudioClip("sounds/Bird-song.mp3")
     },
+    animations: {
+        riversWalkClip: new AnimationState("walking"),
+        turnRClip: new AnimationState("rightTurn"),
+        turnLClip: new AnimationState("turnLeft")
+    },
     models: {
+        house: new GLTFShape("models/house.glb"),
         staticobjects: new GLTFShape("models/static_objects_glb.glb"),
         animatedleaves: new GLTFShape("models/leaves_falling_glb.glb"),
         lantern: new GLTFShape("models/lantern_glb.glb"),
         grassblades: new GLTFShape("models/grass_glb.glb"),
         brute: new GLTFShape("models/BruteAnimated6.glb"),
-        peasant: new GLTFShape("models/peasantAnimated2.glb"),
+        peasant: new GLTFShape("models/peasant.glb"),
         paladin: new GLTFShape("models/paladin6.glb")
     },
     textures: {
         textContainer: new Texture("src/images/dialogs/textContainer.png"),
         optionsContainer: new Texture("src/images/dialogs/optionsContainer.png"),
         blueContainer: new Texture("src/images/dialogs/Sax_Text_Box_blue.png"),
-        grayContainer: new Texture("src/images/dialogs/graybox.png")
+        grayContainer: new Texture("src/images/dialogs/graybox.png"),
+        playContainer: new Texture("src/images/UI-atlas.png"),
+        hpCounter: new Texture("src/images/OldManDialog.png")
       }
 }

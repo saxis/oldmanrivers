@@ -2,91 +2,61 @@ import { BaseScene } from "./gameObjects/baseScene";
 import resources from "./resources";
 import { PeasantDialog, SecondDialog } from "./ui/index";
 import { Npc } from "./gameObjects/npc";
-import { BuilderHUD } from "./modules/BuilderHUD";
 import { spawnEntity } from "./modules/SpawnerFunctions";
-//import { CreateOutside } from "./gameObjects/outside";
-import utils from "../node_modules/decentraland-ecs-utils/index";
-import { createChannel } from "../node_modules/decentraland-builder-scripts/channel";
-import { createInventory } from "../node_modules/decentraland-builder-scripts/inventory";
-import Script1 from "../ff9257ec-9d62-404f-97c7-cf19c4035761/src/item";
-import Script2 from "../7402ef02-fc7f-4e19-b44a-4613ee2526c5/src/item";
-import Script3 from "../df8d742f-045c-4fe3-8c70-adfb47d22baf/src/item";
-import Script4 from "../swordScript/src/item";
-//import { getUserData } from "@decentraland/Identity";
+//import { TimeOut } from "./components/timeout";
+import { WaitSystem } from "./gameObjects/waitSystem";
+import { DerpData } from "./gameObjects/lerpData";
+import { Walk } from "./gameObjects/riversWalk";
+import { Battle } from "./gameObjects/battle";
+import { SoundBox } from "./components/soundbox";
 
-let baseScene = new BaseScene();
-//let outside = new CreateOutside();
+new BaseScene();
 
 let clicked = false;
 let dead = false;
 let HIT_POINTS = 50;
-let PLAYER_HP = 50;
-let brutedead = false;
-let playerdead = false;
-let battle = false;
+let PLAYER_HP = 15;
+let battle = true;
 
 const gameCanvas = new UICanvas();
 const text = new UIText(gameCanvas);
-const instructions = new UIText(gameCanvas);
 
 text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
 text.vAlign = "bottom";
 text.positionX = -80;
-text.visible = false;
+text.visible = true;
 
-instructions.value =
-  "The Brute has defeated you. Seek out the sorceress Mehetra in her abode to the far North.";
-instructions.fontSize = 20;
-instructions.hAlign = "left";
-instructions.positionX = 200;
-instructions.vAlign = "center";
-instructions.visible = false;
+const oldManCounter = new UIImage(gameCanvas, resources.textures.hpCounter)
+
+oldManCounter.positionX = -600;
+oldManCounter.positionY = 150;
+oldManCounter.visible = true;
 
 const dialog = new PeasantDialog(gameCanvas);
+dialog.onDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeeback = false;
+dialog.onDialogEnded = () => oldmanrivers.getComponent(OnPointerDown).showFeeback = true;
+
 const seconddialog = new SecondDialog(gameCanvas)
 
-const soundbox2 = new Entity();
-soundbox2.addComponent(new Transform());
-soundbox2.getComponent(Transform).position.set(7, 0, 8);
-soundbox2.addComponent(new AudioSource(resources.sounds.evillaugh));
-engine.addEntity(soundbox2);
+const point1 = new Vector3(12, 0, 5);
+const point2 = new Vector3(13, 0, 14);
+const point3 = new Vector3(3, 0, 14);
+const point4 = new Vector3(2, 0, 3);
 
-const soundbox3 = new Entity();
-soundbox3.addComponent(new Transform());
-soundbox3.getComponent(Transform).position.set(7,1,8);
-soundbox3.addComponent(new AudioSource(resources.sounds.playerHit2));
-engine.addEntity(soundbox3);
-
-const grassBase = new Entity("grass");
-    const grassShape = new GLTFShape(
-      "models/FloorBaseGrass_01/FloorBaseGrass_01.glb"
-    );
-    grassBase.addComponentOrReplace(grassShape);
-    const grassLoc = new Transform({
-      position: new Vector3(8, 0, 8),
-      rotation: new Quaternion(0, 0, 0, 1),
-      scale: new Vector3(1, 1, 1),
-    });
-    grassBase.addComponentOrReplace(grassLoc);
-    engine.addEntity(grassBase);
-    grassBase.addComponent(new AudioSource(resources.sounds.birdsong));
-    grassBase.getComponent(AudioSource).playOnce();
-    grassBase.addComponent(
-      new utils.Delay(1600000, () => {
-        log("After 3 minute delay playing song again")
-        grassBase.getComponent(AudioSource).playOnce();
-      })
-    )
-
+function showHealthBar() {
+  oldManCounter.visible = true;
+}
 
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
   resources.models.paladin,
-  5
+  5,
+  point1
 );
 oldmanrivers.addComponent(
   new OnPointerDown(
     e => {
+      showHealthBar();
       dialog.run();
     },
     {
@@ -97,490 +67,19 @@ oldmanrivers.addComponent(
   )
 );
 
-
-// //model stuff
-const point1 = new Vector3(12, 0, 5);
-const point2 = new Vector3(13, 0, 14);
-const point3 = new Vector3(3, 0, 14);
-const point4 = new Vector3(2, 0, 3);
-//const point5 = new Vector3(13, 0, 3);
-
 const path: Vector3[] = [point1, point2, point3, point4];
-const TURN_TIME = 0.9;
+const TURN_TIME = 0.3;
+const PUNCH_TIME = 2.2;
 
 const lantern = spawnEntity(5.6,2.2,8.82,  0,-90,0,  1,1,1)
 lantern.addComponentOrReplace(resources.models.lantern)
 lantern.addComponent(new AudioSource(resources.sounds.lava))
 
-@Component("timeOut")
-export class TimeOut {
-  timeLeft: number;
-  constructor(time: number) {
-    this.timeLeft = time;
-  }
-}
 
-export const paused = engine.getComponentGroup(TimeOut);
+oldmanrivers.addComponent(new DerpData(path));
 
-// LerpData component
-@Component("lerpData")
-export class LerpData {
-  array: Vector3[] = path;
-  origin: number = 0;
-  target: number = 1;
-  fraction: number = 0;
-}
+oldmanrivers.riversWalkClip.play()
 
-let oldmanriversAnimator = new Animator();
-oldmanrivers.addComponent(oldmanriversAnimator);
-
-//Add walk animation
-const riversWalkClip = new AnimationState("walking");
-oldmanriversAnimator.addClip(riversWalkClip);
-
-const turnRClip = new AnimationState("rightTurn")
-oldmanriversAnimator.addClip(turnRClip)
-turnRClip.looping = false;
-
-const turnLClip = new AnimationState("turnLeft")
-oldmanriversAnimator.addClip(turnLClip)
-turnLClip.looping = false;
-
-const talkingClip = new AnimationState("talk");
-oldmanriversAnimator.addClip(talkingClip);
-
-const salute = new AnimationState("salute");
-oldmanriversAnimator.addClip(salute);
-
-const fightIdle = new AnimationState("fightIdle");
-oldmanriversAnimator.addClip(fightIdle);
-
-const boxing = new AnimationState("boxing");
-oldmanriversAnimator.addClip(boxing)
-
-oldmanrivers.addComponent(new LerpData());
-
-seconddialog.onSecondSequenceComplete = () => {
-  log("in onSecondSequenceComplete")
-}
-
-seconddialog.onSecondSequenceComplete = () => {
-  log("in on secondPoorChoiceMade")
-}
-
-seconddialog.onSecondDialogStarted = () => {
-  oldmanrivers.getComponent(OnPointerDown).showFeeback = false; 
-}
-
-seconddialog.onSecondDialogEnded = () => {
-  oldmanrivers.getComponent(OnPointerDown).showFeeback = true; 
-}
-
-dialog.onDialogStarted = () => {
-  oldmanrivers.getComponent(OnPointerDown).showFeeback = false;
-}
-
-dialog.onDialogEnded = () => {
-  oldmanrivers.getComponent(OnPointerDown).showFeeback = true;
-}
-
-function resolveAfter10Seconds() {
-  return new Promise(resolve => {
-    oldmanrivers.addComponentOrReplace(
-      new utils.Delay(100000, () => {
-        resolve("resolved after ten");
-      })
-    );
-  });
-}
-
-async function longAsyncCall() {
-  //log("calling long asyncCall to kill time");
-  var result = await resolveAfter10Seconds();
-  //log('setting clicked to false')
-  clicked = false;
-  //spinAttack.stop();
-  //log("spinAttack is now sopped");
-  //log(result);
-  // expected output: 'resolved'
-}
-
-dialog.onPoorChoiceMade = () => {
-  //log("In on Poor choice made");
-  battle = true;
-  grassBase.getComponent(AudioSource).volume = 0;
-  lantern.getComponent(AudioSource).playOnce();
-
-  //log('set talkingClip to false')
-  talkingClip.playing = false;
-
-  //log('playing fightIdle')
-  fightIdle.play();
-
-  text.visible = true;
-
-  oldmanrivers.addComponentOrReplace(
-    new OnPointerDown(
-      e => {
-        if (!dead) {
-          //log("rivers was clicked");
-          clicked = true;
-          //asyncCall();
-          //fighter.addComponent(new TimeOut(HIT_TIME));
-          boxing.stop();
-          fightIdle.play();
-          riversWalkClip.playing = false;
-          boxing.playing = false;
-          turnRClip.playing = false;
-          //deathFromFront.playing = false;
-          fightIdle.looping = false;
-          oldmanrivers.getComponent(AudioSource).playOnce();
-
-          HIT_POINTS = HIT_POINTS - 1;
-          //log("hit points is now: ", HIT_POINTS);
-          text.value = `HP: ${PLAYER_HP}    Brute HP: ${HIT_POINTS}`;
-
-          if (HIT_POINTS == 0) {
-            //log("play death animation");
-            brutedead = true
-            boxing.stop();
-            fightIdle.stop();
-            riversWalkClip.stop();
-            dead = true;
-            talkingClip.play();
-          }
-        } 
-      },
-      {
-        button: ActionButton.PRIMARY,
-        showFeeback: true,
-        hoverText: "Fight Me!!!!!"
-      }
-    )
-  );
-
-  // function resolveAfter2Seconds() {
-  //   return new Promise(resolve => {
-  //     brute.addComponentOrReplace(
-  //       new utils.Delay(2000, () => {
-  //         resolve("resolved");
-  //       })
-  //     );
-  //   });
-  // }
-
-  
-
-  // async function asyncCall() {
-  //   log("calling asyncCall to kill time");
-  //   var result = await resolveAfter2Seconds();
-  //   clicked = false;
-  //   log("clicked is now false");
-  //   log(result);
-  //   // expected output: 'resolved'
-  // }
-
-  
-
-};
-
-dialog.onSequenceComplete = () => {
-  log("in onSequenceCompleted");
-  talkingClip.pause()
-  //log("trying to play salute animation");
-  //salute.play()
-  //afterSalute()
-};
-
-//log('playing riversWalkClip - 289')
-riversWalkClip.play();
-
-async function afterSalute() {
-  //await salute.play()
-  //salute.looping = false;
-  //log('playing the walk clip after the salute')
-  riversWalkClip.play()
-}
-
-// Walk System
-export class GnarkWalk {
-  update(dt: number) {
-    if (!oldmanrivers.hasComponent(TimeOut) && !talkingClip.playing && !fightIdle.playing && !boxing.playing) {
-      //log('timeout is false, no animations are playing, so start walking')
-      let transform = oldmanrivers.getComponent(Transform);
-      let path = oldmanrivers.getComponent(LerpData);
-      riversWalkClip.playing = true;
-      turnRClip.playing = false;
-      if (path.fraction < 1) {
-        path.fraction += dt / 12;
-        transform.position = Vector3.Lerp(
-          path.array[path.origin],
-          path.array[path.target],
-          path.fraction
-        );
-      } else {
-        path.origin = path.target;
-        path.target += 1;
-        if (path.target >= path.array.length) {
-          path.target = 0;
-        }
-        path.fraction = 0;
-        transform.lookAt(path.array[path.target]);
-        riversWalkClip.pause();
-        turnRClip.play();
-        turnRClip.looping = false;
-        oldmanrivers.addComponent(new TimeOut(TURN_TIME));
-      }
-    }
-  }
-}
-
-engine.addSystem(new GnarkWalk());
-
-export class WaitSystem {
-  update(dt: number) {
-    for (let ent of paused.entities) {
-      let time = ent.getComponentOrNull(TimeOut);
-      if (time) {
-        if (time.timeLeft > 0) {
-          time.timeLeft -= dt;
-        } else {
-          ent.removeComponent(TimeOut);
-        }
-      }
-    }
-  }
-}
-
+engine.addSystem(new Walk(oldmanrivers, TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.turnLClip));
 engine.addSystem(new WaitSystem());
-
-const fightinterval = new utils.Interval(500, () => {
-  soundbox3.getComponent(AudioSource).playOnce()
-  PLAYER_HP--;
-})
-
-export class BattleCry {
-  update() {
-    let transform = oldmanrivers.getComponent(Transform);
-    let path = oldmanrivers.getComponent(LerpData);
-    let dist = distance(transform.position, camera.position);
-    if (dist < 16) {
-      //log('less than 16 away')
-      if(battle){
-        //log('in the battle')
-        if (!dead && !clicked) {
-          //log('not dead and not clicked')
-          if (boxing.playing == false) {
-            //log('boxing is not playing')
-            riversWalkClip.playing = false;
-            turnRClip.playing = false;
-            turnLClip.playing = false;
-            fightIdle.playing = false;
-
-            boxing.reset();
-            //log('Starting to play the boxing, adding looping and playing variables to ssee if he will box now')
-            boxing.play();
-            boxing.looping = true;
-            boxing.playing = true;
-
-            fightinterval
-
-            //spinAttack.playing = true;
-            longAsyncCall();
-            //log('stopping spinattack after long asyncall')
-            //spinAttack.stop();
-  
-            
-            //Set the Value in the HUD for the current HP 
-            text.value = `HP: ${PLAYER_HP}    Rivers HP: ${HIT_POINTS}`;
-            //log("PLAYER HP is now: ", PLAYER_HP);
-            
-            if (PLAYER_HP == 0) {
-              //log("play dead music.. Kick player out of the scene");
-              soundbox2.getComponent(AudioSource).playOnce();
-  
-              text.visible = false;
-              instructions.visible = true;
-  
-              // brute.addComponentOrReplace(
-              //   new utils.Delay(2000, () => {
-              //     playerdead = true;
-              //     engine.removeEntity(brute);
-              //   })
-              // );
-            }
-          } 
-          // else {
-          //   log('boxing is playing already dont do anything else right now ',fightinterval)
-          //   //fightinterval
-          // }
-        } 
-        // else {
-        //   log(`dead ${dead} clicked ${clicked}`)
-        // }
-      } else {
-        if(!battle) {
-          if (talkingClip.playing == false) {
-            //log('less than 16m away, talkingClip is looping')
-            talkingClip.reset();
-            talkingClip.playing = true;
-            riversWalkClip.playing = false;
-            turnRClip.playing = false;
-         }
-        } else {
-          if (fightIdle.playing == false) {
-            //log('less than 16m away, fightIdle is looping')
-            fightIdle.reset();
-            fightIdle.playing = true;
-            riversWalkClip.playing = false;
-            turnRClip.playing = false;
-            talkingClip.playing = false;
-         } 
-        }
-        let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
-        transform.lookAt(playerPos);
-      }
-      
-    } else if (talkingClip.playing || boxing.playing || fightIdle.playing) {
-      //log('more than 16m away, stopping boxing, talking, fightidling..')
-      talkingClip.stop();
-      boxing.stop();
-      fightIdle.stop();
-      transform.lookAt(path.array[path.target]);
-    }
-  }
-  
-}
-
-engine.addSystem(new BattleCry());
-
-const camera = Camera.instance;
-
-function distance(pos1: Vector3, pos2: Vector3): number {
-  const a = pos1.x - pos2.x;
-  const b = pos1.z - pos2.z;
-  return a * a + b * b;
-}
-
-// function respawnRivers() {
-//   engine.addEntity(oldmanrivers)
-
-//   oldmanrivers.addComponentOrReplace(
-//     new OnPointerDown(
-//       e => {
-//         seconddialog.run();
-//       },
-//       {
-//         button: ActionButton.PRIMARY,
-//         showFeeback: true,
-//         hoverText: "Speak to Old Man Rivers"
-//       }
-//     )
-//   );
-// }
-
-// function spawnLoot() {
-//   const fantasyChest = new Entity("fantasyChest");
-//   engine.addEntity(fantasyChest);
-//   const transform3 = new Transform({
-//     position: new Vector3(6, 0, 6.5),
-//     rotation: new Quaternion(0, 0, 0, 1),
-//     scale: new Vector3(1, 1, 1)
-//   });
-//   fantasyChest.addComponentOrReplace(transform3);
-
-//   const fantasyIronKey = new Entity("fantasyIronKey");
-//   engine.addEntity(fantasyIronKey);
-//   const transform4 = new Transform({
-//     position: new Vector3(6, 0, 7.5),
-//     rotation: new Quaternion(0, 0, 0, 1),
-//     scale: new Vector3(1, 1, 1)
-//   });
-//   fantasyIronKey.addComponentOrReplace(transform4);
-
-//   const scroll = new Entity("scroll");
-//   engine.addEntity(scroll);
-//   const transform5 = new Transform({
-//     position: new Vector3(6.5, 0.2, 6.5),
-//     rotation: new Quaternion(0, 0, 0, 1),
-//     scale: new Vector3(1, 1, 1)
-//   });
-//   scroll.addComponentOrReplace(transform5);
-
-//   const oldIronSword = new Entity("oldIronSword");
-//   engine.addEntity(oldIronSword);
-//   oldIronSword.setParent(baseScene);
-//   const transform6 = new Transform({
-//     position: new Vector3(6, 0.3, 6.5),
-//     rotation: new Quaternion(
-//       -7.781870092739773e-16,
-//       0.7071068286895752,
-//       -8.429368136830817e-8,
-//       -0.7071068286895752
-//     ),
-//     scale: new Vector3(1.000008225440979, 1, 0.5000041127204895)
-//   });
-//   oldIronSword.addComponentOrReplace(transform6);
-  
-
-//   const channelId = Math.random()
-//     .toString(16)
-//     .slice(2);
-//   const channelBus = new MessageBus();
-//   const inventory = createInventory(UICanvas, UIContainerStack, UIImage);
-//   const options = { inventory };
-
-//   const script1 = new Script1();
-//   const script2 = new Script2();
-//   const script3 = new Script3();
-//   const script4 = new Script4();
-//   script1.init();
-//   script2.init(options);
-//   script3.init();
-//   script4.init(options);
-
-//   script1.spawn(
-//     fantasyChest,
-//     { onClickText: "Use the Key", onClick: [], onOpen: [], onClose: [] },
-//     createChannel(channelId, fantasyChest, channelBus)
-//   );
-
-//   script2.spawn(
-//     fantasyIronKey,
-//     {
-//       target: "fantasyChest",
-//       respawns: false,
-//       onEquip: [],
-//       onUse: [{ entityName: "fantasyChest", actionId: "toggle", values: {} }]
-//     },
-//     createChannel(channelId, fantasyIronKey, channelBus)
-//   );
-
-
-//   script3.spawn(
-//     scroll,
-//     { "text": "You have received Scroll of Weak Fireball", "fontSize": 24 },
-//     createChannel(channelId, scroll, channelBus)
-//   );
-
-//   script4.spawn(
-//     oldIronSword,
-//     {
-//       target: "fantasyChest",
-//       respawns: false,
-//       onEquip: [],
-//       onUse: [{entityName: "fantasyChest", actionId: "toggle", values: {}}]
-//     },
-//     createChannel(channelId, oldIronSword, channelBus)
-//   )
-
-//   // const hud: BuilderHUD = new BuilderHUD();
-//   // hud.attachToEntity(fantasyIronKey)
-
-//   respawnRivers();
-// }
-
-
-const leaves = spawnEntity(16,0,0,  0,0,0,  1,1,1)
-leaves.addComponentOrReplace(resources.models.animatedleaves)
-
+engine.addSystem(new Battle(oldmanrivers,TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.talkingClip, oldmanrivers.turnLClip, oldmanrivers.boxing, battle, clicked, PUNCH_TIME, PLAYER_HP))
