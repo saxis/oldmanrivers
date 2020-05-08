@@ -3,11 +3,13 @@ import { DerpData } from "./lerpData";
 import { TimeOut } from "../components/timeout";
 import { SoundBox } from "../components/soundbox";
 import resources from "../resources";
+import { Player } from "./player";
 
 const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
 
 export class Battle {
+    private _player: Player;
     private _npc: Npc;
     private _turntime: number;
     private _walk: AnimationState;
@@ -20,7 +22,8 @@ export class Battle {
     private _playerhp: number;
     private dead = false;
 
-    constructor(npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, battle:boolean, clicked:boolean, battlepause:number, playerhp: number ) {
+    constructor(player: Player, npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, battle:boolean, clicked:boolean, battlepause:number, playerhp: number ) {
+        this._player = player;
         this._npc = npc;
         this._turntime = turntime;
         this._walk = walk;
@@ -48,9 +51,11 @@ export class Battle {
               //fightIdle.playing = false;
               this._fight.play()
               soundbox3.play()
-              this._playerhp--; 
+              this._player.damage(1)
+              //this._playerhp--; 
               //text.value = `HP: ${PLAYER_HP}    Rivers HP: ${HIT_POINTS}`;
-              if (this._playerhp == 0) {
+              if(this._player.hp == 0) {
+              //if (this._playerhp == 0) {
                 soundbox2.play()
                 //text.visible = false;
                 //instructions.visible = true;

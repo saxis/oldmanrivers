@@ -5,7 +5,6 @@ export const paused = engine.getComponentGroup(TimeOut);
 export class WaitSystem {
   update(dt: number) {
     for (let ent of paused.entities) {
-      log('paused entities: ', paused.entities)
       let time = ent.getComponentOrNull(TimeOut);
       if (time) {
         if (time.timeLeft > 0) {

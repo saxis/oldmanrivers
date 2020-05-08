@@ -1,11 +1,13 @@
 import resources from "../resources";
-import utils from "../../node_modules/decentraland-ecs-utils/index";
 import { spawnEntity } from "../modules/SpawnerFunctions";
+//import utils from "../../node_modules/decentraland-ecs-utils/index";
+//import { spawnEntity } from "../modules/SpawnerFunctions";
 
 export class BaseScene extends Entity {
   constructor() {
     super();
     engine.addEntity(this);
+
     const staticObjects = new Entity();
     staticObjects.setParent(this);
     const gltfShape = resources.models.staticobjects;
@@ -29,15 +31,16 @@ export class BaseScene extends Entity {
     grassblades.addComponentOrReplace(grassBladesShape);
     engine.addEntity(grassblades);
 
-    const grassblades2 = new Entity("grassblades2");
-    const grassBlades2Loc = new Transform({
+    const orccamp = new Entity("orccamp");
+    const orcShape = resources.models.orc_camp;
+    const orcLoc = new Transform({
       position: new Vector3(16, 0, -16),
       rotation: new Quaternion(0, 0, 0, 1),
       scale: new Vector3(1, 1, 1),
     });
-    grassblades2.addComponentOrReplace(grassBlades2Loc);
-    grassblades2.addComponentOrReplace(grassBladesShape);
-    engine.addEntity(grassblades2);
+    orccamp.addComponentOrReplace(orcLoc);
+    orccamp.addComponentOrReplace(orcShape);
+    engine.addEntity(orccamp);
 
     const grassBase = new Entity("grass");
     const grassBase2 = new Entity("grass2");
@@ -63,16 +66,17 @@ export class BaseScene extends Entity {
     grassBase.addComponent(new AudioSource(resources.sounds.birdsong));
     grassBase.getComponent(AudioSource).playOnce();
 
-    const leaves = spawnEntity(16,0,0,  0,0,0,  1,1,1)
-leaves.addComponentOrReplace(resources.models.animatedleaves)
+    const flag = spawnEntity(16,0,-16,0,0,0,1,1,1);
+    flag.addComponentOrReplace(resources.models.flag)
 
-// const soundbox3 = new Entity();
-// soundbox3.addComponent(new Transform());
-// soundbox3.getComponent(Transform).position.set(7,1,8);
-// soundbox3.addComponent(new AudioSource(resources.sounds.playerHit2));
-// engine.addEntity(soundbox3);
+    const smoke1 = spawnEntity(16, 0, -16, 0, 0,0,1,1,1);
+    smoke1.addComponentOrReplace(resources.models.smoke1)
 
+    const smoke2 = spawnEntity(16,0,-16,0,0,0,1,1,1)
+    smoke2.addComponentOrReplace(resources.models.smoke2)
 
-    
+    const leaves = spawnEntity(16, 0, 0, 0, 0, 0, 1, 1, 1);
+    leaves.addComponentOrReplace(resources.models.animatedleaves);
+
   }
 }
