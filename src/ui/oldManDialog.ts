@@ -1,6 +1,6 @@
 import resources from "../resources";
 import { SimpleDialog } from "../modules/simpleDialog";
-import utils from "../../node_modules/decentraland-ecs-utils/index";
+//import utils from "../../node_modules/decentraland-ecs-utils/index";
 
 
 export class PeasantDialog extends SimpleDialog {
@@ -122,6 +122,9 @@ export class PeasantDialog extends SimpleDialog {
               )
               .call(() => (firstTimeDialog = true))
               .call(() =>  this.onDialogEnded())
+            .endOption()
+            .option(() => "3:- Your mother is an orc!")
+              .call(() => this.onPoorChoiceMade())
             .endOption()
           .endOptionsGroup()
       .else()

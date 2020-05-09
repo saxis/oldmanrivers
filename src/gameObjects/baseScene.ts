@@ -66,17 +66,20 @@ export class BaseScene extends Entity {
     grassBase.addComponent(new AudioSource(resources.sounds.birdsong));
     grassBase.getComponent(AudioSource).playOnce();
 
-    const flag = spawnEntity(16,0,-16,0,0,0,1,1,1);
-    flag.addComponentOrReplace(resources.models.flag)
+    const flag = spawnEntity(16, 0, -16, 0, 0, 0, 1, 1, 1);
+    flag.addComponentOrReplace(resources.models.flag);
 
-    const smoke1 = spawnEntity(16, 0, -16, 0, 0,0,1,1,1);
-    smoke1.addComponentOrReplace(resources.models.smoke1)
+    const smoke1 = spawnEntity(16, 0, -16, 0, 0, 0, 1, 1, 1);
+    smoke1.addComponentOrReplace(resources.models.smoke1);
 
-    const smoke2 = spawnEntity(16,0,-16,0,0,0,1,1,1)
-    smoke2.addComponentOrReplace(resources.models.smoke2)
+    const smoke2 = spawnEntity(16, 0, -16, 0, 0, 0, 1, 1, 1);
+    smoke2.addComponentOrReplace(resources.models.smoke2);
 
     const leaves = spawnEntity(16, 0, 0, 0, 0, 0, 1, 1, 1);
     leaves.addComponentOrReplace(resources.models.animatedleaves);
 
+    const lantern = spawnEntity(5.6, 2.2, 8.82, 0, -90, 0, 1, 1, 1);
+    lantern.addComponentOrReplace(resources.models.lantern);
+    lantern.addComponent(new AudioSource(resources.sounds.lava));
   }
 }
