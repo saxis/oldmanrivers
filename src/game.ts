@@ -12,14 +12,17 @@ import { HpCounter } from "./gameObjects/hpCounter";
 new BaseScene();
 
 let clicked = false;
-let PLAYER_HP = 15;
-let battle = true;
+//let PLAYER_HP = 15;
+//let battle = true;
 const TURN_TIME = 0.3;
 const PUNCH_TIME = 2.2;
 
-const player = new Player(25)
+
 const gameCanvas = new UICanvas();
-const oldManCounter = new HpCounter(gameCanvas,resources.textures.hpCounter)
+const oldManCounter = new HpCounter(gameCanvas,resources.textures.hpCounter,'npc')
+const player = new Player(25,gameCanvas)
+const playerHpBar = new HpCounter(gameCanvas, resources.textures.playerCounter,'player')
+//playerHpBar.show()
 
 const dialog = new PeasantDialog(gameCanvas);
 dialog.onDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
@@ -28,11 +31,12 @@ dialog.onDialogEnded = () => {
   oldmanrivers.getComponent(OnPointerDown).showFeedback = true
 }
 dialog.onSequenceComplete = () => {
-  //oldmanrivers.riversWalkClip.pause()
   log("in onSequenceCompleted");
 }
 dialog.onPoorChoiceMade = () => {
   oldmanrivers.battle = true;
+  oldmanrivers.showhpbar();
+  player.showhpbar();
 }
 
 const seconddialog = new SecondDialog(gameCanvas)
@@ -40,13 +44,15 @@ const seconddialog = new SecondDialog(gameCanvas)
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
   resources.models.paladin,
-  5,
-  new Vector3(12, 0, 5)
+  25,
+  new Vector3(12, 0, 5),
+  gameCanvas
 );
 oldmanrivers.addComponent(
   new OnPointerDown(
     e => {
       oldManCounter.show()
+      //playerHpBar.show()
       dialog.run();
     },
     {
@@ -60,6 +66,6 @@ oldmanrivers.addComponent(
 oldmanrivers.addComponentOrReplace(new DerpData([new Vector3(12, 0, 5),new Vector3(13, 0, 14),new Vector3(3, 0, 14), new Vector3(2, 0, 3)]))
 engine.addSystem(new Walk(oldmanrivers, TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.turnLClip));
 engine.addSystem(new WaitSystem());
-engine.addSystem(new Battle(player,oldmanrivers,TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.talkingClip, oldmanrivers.turnLClip, oldmanrivers.boxing, oldmanrivers.hit, oldmanrivers.death, clicked, PUNCH_TIME, PLAYER_HP))
+engine.addSystem(new Battle(player,oldmanrivers,TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.talkingClip, oldmanrivers.turnLClip, oldmanrivers.boxing, oldmanrivers.hit, oldmanrivers.death, clicked, PUNCH_TIME))
 
 oldmanrivers.riversWalkClip.play()

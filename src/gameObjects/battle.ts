@@ -22,11 +22,11 @@ export class Battle {
     //private _battle = true;
     private _clicked = false;
     private _battlepause: number;
-    private _playerhp: number;
+   // private _playerhp: number;
     private dead = false;
     private _startfight: boolean = false;
 
-    constructor(player: Player, npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number, playerhp: number ) {
+    constructor(player: Player, npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number) {
         this._player = player;
         this._npc = npc;
         this._turntime = turntime;
@@ -37,7 +37,7 @@ export class Battle {
         this._hit = hit;
         this._death = death;
         this._clicked = clicked;
-        this._playerhp = playerhp;
+        //this._playerhp = playerhp;
         this._battlepause = battlepause;
     }
 
@@ -89,6 +89,11 @@ export class Battle {
             this._npc.takedamage(1)
             this._npc.addComponentOrReplace(new TimeOut(this._battlepause));
             this._clicked = false;
+            if(this._player.hp == 0) {
+              soundbox2.play()
+              this.dead = true;
+              this._npc.battle = false;
+            }
           }  
         } else {
           this._walk.playing = false;

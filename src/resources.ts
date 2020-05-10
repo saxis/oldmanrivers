@@ -2,7 +2,7 @@ export default {
     sounds: {
         goblinHit: new AudioClip("sounds/goblin_hit.mp3"),
         punch: new AudioClip("sounds/punch.mp3"),
-        playerHit: new AudioClip("sounds/player_hit.mp"),
+        playerHit: new AudioClip("sounds/player_hit.mp3"),
         playerHit2: new AudioClip("sounds/player_hit2.mp3"),
         grobb: new AudioClip("sounds/GROBB.mp3"),
         lava: new AudioClip("sounds/LAVASTOR.mp3"),
@@ -40,6 +40,7 @@ export default {
         blueContainer: new Texture("src/images/dialogs/Sax_Text_Box_blue.png"),
         grayContainer: new Texture("src/images/dialogs/graybox.png"),
         playContainer: new Texture("src/images/UI-atlas.png"),
-        hpCounter: new Texture("src/images/OldManDialog.png")
+        hpCounter: new Texture("src/images/OldManDialog2.png"),
+        playerCounter: new Texture("src/images/player.png")
       }
 }
