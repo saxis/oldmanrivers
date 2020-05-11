@@ -1,6 +1,6 @@
 import { BaseScene } from "./gameObjects/baseScene";
 import resources from "./resources";
-import { PeasantDialog, SecondDialog } from "./ui/index";
+import { PeasantDialog, SecondDialog, NpcWinDialog } from "./ui/index";
 import { Npc } from "./gameObjects/npc";
 import { WaitSystem } from "./gameObjects/waitSystem";
 import { DerpData } from "./gameObjects/lerpData";
@@ -26,7 +26,19 @@ const playerHpBar = new HpCounter(gameCanvas, resources.textures.playerCounter,'
 
 const seconddialog = new SecondDialog(gameCanvas);
 seconddialog.onSecondDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
-seconddialog.onSecondDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = true 
+seconddialog.onSecondDialogEnded = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = true 
+seconddialog.onSecondSequenceComplete = () => {
+  log("in onSecondSequenceComplete")
+  log("load a new click event now. New story or something")
+}
+
+const npcwindialog = new SecondDialog(gameCanvas);
+npcwindialog.onSecondDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
+npcwindialog.onSecondDialogEnded = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = true 
+npcwindialog.onSecondSequenceComplete = () => {
+  log("in npcwin onSecondSequenceComplete")
+  log("load a new click event now. New story or something")
+}
 
 const dialog = new PeasantDialog(gameCanvas);
 dialog.onDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
@@ -47,11 +59,11 @@ dialog.npcWon = () => {
   oldmanrivers.addComponentOrReplace(
     new OnPointerDown(
       e => {
-        seconddialog.run();
+        npcwindialog.run();
       },
       {
         button: ActionButton.PRIMARY,
-        hoverText: "Talk to Old Man Rivers",
+        hoverText: "Apologize to Old Man Rivers",
         showFeedback:true
       }
     )

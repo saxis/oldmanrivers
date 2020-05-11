@@ -3,7 +3,7 @@ import { SimpleDialog } from "../modules/simpleDialog";
 import utils from "../../node_modules/decentraland-ecs-utils/index";
 
 
-export class SecondDialog extends SimpleDialog {
+export class NpcWinDialog extends SimpleDialog {
   private dialogTree: SimpleDialog.DialogTree;
 
   public onSecondSequenceComplete: () => void;
@@ -67,7 +67,7 @@ export class SecondDialog extends SimpleDialog {
         .call(() => (firstTimeDialog = false))
         .say(
           () =>
-          "Old Man Rivers says, \"You're stronger than you look it seems. So. [Crystals] huh \"",
+          "Old Man Rivers says, \"Need to watch your mouth. So. [Crystals] huh \"",
           { color: npcColor }
         )
           .beginOptionsGroup()

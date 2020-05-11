@@ -43,17 +43,13 @@ export class PeasantDialog extends SimpleDialog {
       },
       optionsContainer: {
         stackOrientation: UIStackOrientation.VERTICAL,
-        //spacing: 2,
         width: "47%",
         height: "15%",
         vAlign: "top",
         hAlign: "center",
-        //positionY: "-75%",
-        //positionY: "-14%",
         positionY: "-75%",
         background: resources.textures.grayContainer,
         backgroundConfig: {sourceWidth: 200, sourceHeight: 70},
-        //optionsTextConfig: { fontSize: 18, paddingLeft: 25, paddingRight: 25 }
         optionsTextConfig: { fontSize: 18, paddingLeft: 20, positionY: "-60%", color: Color4.Red()}
       }
     });
