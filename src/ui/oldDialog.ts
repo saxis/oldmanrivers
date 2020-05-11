@@ -101,8 +101,7 @@ export class PeasantDialog extends SimpleDialog {
                             { color: npcColor }
                           )
                           .say(() => 
-                            'Old Man Rivers says, "She is out to the East if you want to get a good look at her. Over by the Mystery castle. Maybe the king can keep an eye on her."', { color: npcColor})
-                          //.say(() => 'Old Man Rivers says, "Over by the magic castle where maybe the king can keep an eye on her."', {color:npcColor})
+                            'Old Man Rivers says, "Her prison is right over there, at the edge of this property."', { color: npcColor})
                           .say(() => 'Old Man Rivers says, "She may try to talk to you.. don\'t believe her lies. Come and speak to me again once you have had a look at her."', {color: npcColor})
                           //.say(() => 'Old Man Rivers says, "Come and speak to me again once you have had a look at her."',{color: npcColor})
                           .call(() => this.onSequenceComplete())

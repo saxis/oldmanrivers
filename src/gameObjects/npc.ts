@@ -84,7 +84,7 @@ export class Npc extends Entity {
   }
 
   set hp(val: number) {
-    if (val > 0) {
+    if (val > -1) {
       this._hp = val;
     }
   }

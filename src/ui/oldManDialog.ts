@@ -10,6 +10,8 @@ export class PeasantDialog extends SimpleDialog {
   public onPoorChoiceMade: () => void;
   public onDialogStarted: () => void;
   public onDialogEnded: () => void;
+  public npcWon: () => void;
+  public playerWon: () => void;
 
   constructor(gameCanvas: UICanvas) {
     // Create a new SimpleDialog to manage the dialog tree
@@ -92,7 +94,7 @@ export class PeasantDialog extends SimpleDialog {
                             { color: npcColor }
                           )
                           .say(() => 
-                            'Old Man Rivers- She is right over there. Go take a look and come back here after if you want. Dont believe her lies though.', { color: npcColor})
+                            'Old Man Rivers- She is right over there. Go take a look and come back to talk to me after. Dont believe her lies though.', { color: npcColor})
                           .call(() => this.onSequenceComplete())
                           .call(() =>  this.onDialogEnded())
                         .endOption()
@@ -103,9 +105,15 @@ export class PeasantDialog extends SimpleDialog {
                           )
                           .call(() =>  this.onDialogEnded())
                         .endOption()
+                        .option(() => "3:- The council of mages is evil!")
+                          .call(() => this.onPoorChoiceMade())
+                        .endOption()
                       .endOptionsGroup()
                   .endOption()
-                  .option(() => "2:- I don't care about this at all.")
+                  .option(() => "2:- Your story sucks bro!")
+                    .call(() => this.onPoorChoiceMade())
+                  .endOption()
+                  .option(() => "3:- I don't care about this at all.")
                     .say(() =>
                       'Old Man Rivers says, "No problem. Fare well adventurer. Safe travels."',
                       { color: npcColor }
@@ -140,8 +148,8 @@ export class PeasantDialog extends SimpleDialog {
       .call(() =>  this.onDialogEnded())
       .endOption()
       .option(() => "3:- No. I was not able to find Agatha.")
-      .say(() => 'Old Man Rivers-  Ah. I see. She is 9 parcels or so to the East, just in front of the Mystery Castle.', { color: npcColor}) 
-      .call(() =>  this.onDialogEnded())
+      .say(() => 'Old Man Rivers-  Ah. Then you are very stupid I see. Time to die.', { color: npcColor}) 
+      .call(() =>  this.onPoorChoiceMade())
       .endOption()
       .endOptionsGroup()
       .else()

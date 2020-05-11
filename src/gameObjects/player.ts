@@ -30,7 +30,7 @@ export class Player {
   }
 
   set hp(val: number) {
-    if (val > 0) {
+    if (val > -1) {
       this._hp = val;
     }
   }
@@ -48,7 +48,7 @@ export class Player {
   }
 
   damage(amount: number) {
-    if (amount > 0) {
+  if (amount > 0) {
       this.hp -= amount;
       this.healthBar.value =
         ((this.hp / this._startinghp) * 100).toFixed(0).toString() + "%";

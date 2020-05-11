@@ -4,6 +4,7 @@ import { TimeOut } from "../components/timeout";
 import { SoundBox } from "../components/soundbox";
 import resources from "../resources";
 import { Player } from "./player";
+import { PeasantDialog } from "../ui/index";
 
 const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
@@ -12,33 +13,37 @@ const soundbox4 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), re
 export class Battle {
     private _player: Player;
     private _npc: Npc;
-    private _turntime: number;
+    //private _turntime: number;
     private _walk: AnimationState;
     private _talk: AnimationState;
     private _turn: AnimationState;
     private _fight: AnimationState;
     private _hit: AnimationState;
-    private _death: AnimationState;
+    //private _death: AnimationState;
     //private _battle = true;
     private _clicked = false;
     private _battlepause: number;
    // private _playerhp: number;
     private dead = false;
     private _startfight: boolean = false;
+    private _dialog: PeasantDialog;
 
-    constructor(player: Player, npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number) {
+    public endFight: () => void;
+
+    constructor(player: Player, npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
         this._player = player;
         this._npc = npc;
-        this._turntime = turntime;
+        //this._turntime = turntime;
         this._walk = walk;
         this._talk = talk;
         this._turn = turn;
         this._fight = fight;
         this._hit = hit;
-        this._death = death;
+        //this._death = death;
         this._clicked = clicked;
         //this._playerhp = playerhp;
         this._battlepause = battlepause;
+        this._dialog = dialog
     }
 
     update() {
@@ -76,6 +81,7 @@ export class Battle {
                 soundbox2.play()
                 this.dead = true;
                 this._npc.battle = false;
+                this._dialog.npcWon()
               }
               this._npc.addComponentOrReplace(new TimeOut(this._battlepause)); 
             } 
@@ -89,10 +95,11 @@ export class Battle {
             this._npc.takedamage(1)
             this._npc.addComponentOrReplace(new TimeOut(this._battlepause));
             this._clicked = false;
-            if(this._player.hp == 0) {
-              soundbox2.play()
+            if(this._npc.hp == 0) {
+              //soundbox2.play()
               this.dead = true;
               this._npc.battle = false;
+              this._dialog.playerWon()
             }
           }  
         } else {
