@@ -67,7 +67,7 @@ export class NpcWinDialog extends SimpleDialog {
         .call(() => (firstTimeDialog = false))
         .say(
           () =>
-          "Old Man Rivers says, \"Need to watch your mouth. So. [Crystals] huh \"",
+          "Old Man Rivers says, \"Need to watch your mouth. Be careful who you insult. So. [Crystals] huh \"",
           { color: npcColor }
         )
           .beginOptionsGroup()

@@ -8,7 +8,10 @@ export class SoundBox extends Entity {
       this.addComponent(new Transform(transform));
   
       if (audio) {
-        this.addComponent(new AudioSource(audio));
+        let source = new AudioSource(audio)
+        source.volume = 1;
+        //this.addComponent(new AudioSource(audio));
+        this.addComponent(source)
       }
       
     }

@@ -45,7 +45,7 @@ export class Npc extends Entity {
     npcAnimator.addClip(this.fightIdle);
     this.boxing = new AnimationState("boxing");
     npcAnimator.addClip(this.boxing);
-    this.hit = new AnimationState("fightIdle");
+    this.hit = new AnimationState("hitInHead");
     npcAnimator.addClip(this.hit);
     this.death = new AnimationState("death");
     npcAnimator.addClip(this.death);
@@ -95,11 +95,11 @@ export class Npc extends Entity {
 
   heal(amount: number) {
     this.hp += amount;
-    this.healthBar.value  =  ((this.hp/this._startinghp)*100).toString() + '%';
+    this.healthBar.value  =  ((this.hp/this._startinghp)*100).toFixed(0).toString() + '%';
   }
 
   takedamage(amount: number) {
     this.hp -= amount;
-    this.healthBar.value  = ((this.hp/this._startinghp)*100).toString() + '%';
+    this.healthBar.value  = ((this.hp/this._startinghp)*100).toFixed(0).toString() + '%';
   }
 }

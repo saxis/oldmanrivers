@@ -1,6 +1,7 @@
 import { Npc } from "./npc";
 import { TimeOut } from "../components/timeout";
 import { DerpData } from "./lerpData";
+import { SecondaryTimeOut } from "../components/secondaryTimeOut";
 
 export class Walk {
     private _npc: Npc;
@@ -16,7 +17,7 @@ export class Walk {
     }
 
     update(dt: number) {
-      if (!this._npc.hasComponent(TimeOut)) {
+      if (!this._npc.hasComponent(TimeOut) && !this._npc.hasComponent(SecondaryTimeOut)) {
         let transform = this._npc.getComponent(Transform);
         let path = this._npc.getComponent(DerpData);
         this._walk.playing = true;

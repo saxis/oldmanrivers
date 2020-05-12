@@ -1,7 +1,9 @@
 import resources from "../resources";
 import { SimpleDialog } from "../modules/simpleDialog";
+import { SoundBox } from "../components/soundbox";
 //import utils from "../../node_modules/decentraland-ecs-utils/index";
 
+const dialog1 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.hailtraveler)
 
 export class PeasantDialog extends SimpleDialog {
   private dialogTree: SimpleDialog.DialogTree;
@@ -67,6 +69,7 @@ export class PeasantDialog extends SimpleDialog {
       .call(() =>  this.onDialogStarted())
       .if(() => firstTimeDialog)
         .call(() => (firstTimeDialog = false))
+        .call(() => dialog1.play())
         .say(() =>
           "Old Man Rivers-  Hail traveler. Been some time since I've seen visitors around here. How can I help you?",
           { color: npcColor }

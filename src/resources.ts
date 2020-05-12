@@ -13,7 +13,8 @@ export default {
         missioncomplete: new AudioClip("sounds/missioncomplete.mp3"),
         button: new AudioClip("sounds/button.mp3"),
         evillaugh: new AudioClip("sounds/crazyChickLaugh.mp3"),
-        birdsong: new AudioClip("sounds/Bird-song.mp3")
+        birdsong: new AudioClip("sounds/Bird-song.mp3"),
+        hailtraveler: new AudioClip("sounds/HailTraveler.mp3")
     },
     animations: {
         riversWalkClip: new AnimationState("walking"),
@@ -28,7 +29,7 @@ export default {
         grassblades: new GLTFShape("models/grass_glb.glb"),
         brute: new GLTFShape("models/BruteAnimated6.glb"),
         peasant: new GLTFShape("models/peasant.glb"),
-        paladin: new GLTFShape("models/paladin6.glb"),
+        paladin: new GLTFShape("models/paladin8.glb"),
         orc_camp: new GLTFShape("models/orc_encampment_model.glb"),
         smoke1: new GLTFShape("models/smoke_animated_01.glb"),
         smoke2: new GLTFShape("models/smoke_animated_02.glb"),

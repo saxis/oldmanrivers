@@ -12,27 +12,38 @@ import { HpCounter } from "./gameObjects/hpCounter";
 new BaseScene();
 
 let clicked = false;
-//let PLAYER_HP = 15;
-//let battle = true;
 const TURN_TIME = 0.3;
 const PUNCH_TIME = 2.2;
 
 
 const gameCanvas = new UICanvas();
 const oldManCounter = new HpCounter(gameCanvas,resources.textures.hpCounter,'npc')
-const player = new Player(25,gameCanvas)
-const playerHpBar = new HpCounter(gameCanvas, resources.textures.playerCounter,'player')
+const player = new Player(40,gameCanvas)
+//const playerHpBar = new HpCounter(gameCanvas, resources.textures.playerCounter,'player')
 //playerHpBar.show()
 
+const rect = new UIContainerRect(gameCanvas)
+rect.width = "13.75%"
+rect.height = "6.25%"
+rect.vAlign = "center"
+rect.hAlign = "right"
+rect.positionY = 180;
+rect.color = Color4.Gray();
+rect.opacity = 0.7
+rect.visible = false;
+
 const seconddialog = new SecondDialog(gameCanvas);
-seconddialog.onSecondDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
+seconddialog.onSecondDialogStarted = () => {
+  oldmanrivers.talkingClip.play();
+  oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
+}
 seconddialog.onSecondDialogEnded = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = true 
 seconddialog.onSecondSequenceComplete = () => {
   log("in onSecondSequenceComplete")
   log("load a new click event now. New story or something")
 }
 
-const npcwindialog = new SecondDialog(gameCanvas);
+const npcwindialog = new NpcWinDialog(gameCanvas);
 npcwindialog.onSecondDialogStarted = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
 npcwindialog.onSecondDialogEnded = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = true 
 npcwindialog.onSecondSequenceComplete = () => {
@@ -51,8 +62,8 @@ dialog.onSequenceComplete = () => {
 }
 dialog.onPoorChoiceMade = () => {
   oldmanrivers.battle = true;
-  oldmanrivers.showhpbar();
-  player.showhpbar();
+  // oldmanrivers.showhpbar();
+  // player.showhpbar();
 }
 
 dialog.npcWon = () => {
@@ -88,7 +99,7 @@ dialog.playerWon = () => {
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
   resources.models.paladin,
-  25,
+  20,
   new Vector3(12, 0, 5),
   gameCanvas
 );
@@ -96,7 +107,9 @@ oldmanrivers.addComponent(
   new OnPointerDown(
     e => {
       oldManCounter.show()
-      //playerHpBar.show()
+      rect.visible = true;
+      oldmanrivers.showhpbar();
+      player.showhpbar();
       dialog.run();
     },
     {
