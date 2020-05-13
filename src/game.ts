@@ -102,7 +102,7 @@ dialog.playerWon = () => {
 const orcgrunt1 = new Orc(
   resources.sounds.peasantunlock,
   resources.models.orcgrunt,
-  20,
+  5,
   new Vector3(10, 0, -10),
   Quaternion.Euler(0, -90, 0),
   gameCanvas
@@ -121,23 +121,23 @@ orcgrunt1.addComponent(
   )
 );
 
-// const orcgrunt2 = new Npc(
-//   resources.sounds.peasantunlock,
-//   resources.models.orcgrunt,
-//   20,
-//   new Vector3(9, 0, -8),
-//   Quaternion.Euler(180, -20, 180),
-//   gameCanvas
-// )
+const orcgrunt2 = new Npc(
+  resources.sounds.peasantunlock,
+  resources.models.orcgrunt,
+  20,
+  new Vector3(9, 0, -8),
+  Quaternion.Euler(180, -20, 180),
+  gameCanvas
+)
 
-// const orcgrunt3 = new Npc(
-//   resources.sounds.peasantunlock,
-//   resources.models.orcgrunt,
-//   20,
-//   new Vector3(7, 0, -9),
-//   Quaternion.Euler(-180, 60, -180),
-//   gameCanvas
-// )
+const orcgrunt3 = new Npc(
+  resources.sounds.peasantunlock,
+  resources.models.orcgrunt,
+  20,
+  new Vector3(7, 0, -9),
+  Quaternion.Euler(-180, 60, -180),
+  gameCanvas
+)
 
 
 

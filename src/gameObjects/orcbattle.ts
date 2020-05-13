@@ -31,6 +31,7 @@ export class OrcBattle {
     private _startfight: boolean = false;
     private _dialog: PeasantDialog;
     private _punchpause: number = 2
+    private _pacified: boolean = false;
 
     public endFight: () => void;
 
@@ -50,34 +51,33 @@ export class OrcBattle {
         this._clicked = clicked;
         this._battlepause = battlepause;
         this._dialog = dialog
+
+        this._npc.addComponentOrReplace(
+            new OnPointerDown(
+               e => {
+                 this._npc.getComponent(OnPointerDown).showFeedback = false;
+                 if(!this._npc.hasComponent(SecondaryTimeOut)) {
+                   this._clicked = true;
+                   log('this._clicked ', this._clicked)
+                 }
+               },{
+                 button: ActionButton.PRIMARY,
+                 showFeedback: true,
+                 hoverText: "Punch" 
+               }
+           )
+         )
     }
 
-    update() {
+    update(dt: number) {
       let transform = this._npc.getComponent(Transform);
       //let path = this._npc.getComponent(DerpData); 
       let dist = distance(transform.position, camera.position);
       if (dist < 8) {
         let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
         transform.lookAt(playerPos);
-        if(this._npc.battle){
-          if(!this._startfight){
-            this._npc.addComponentOrReplace(
-               new OnPointerDown(
-                  e => {
-                    this._npc.getComponent(OnPointerDown).showFeedback = false;
-                    if(!this._npc.hasComponent(SecondaryTimeOut)) {
-                      this._clicked = true;
-                      log('this._clicked ', this._clicked)
-                    }
-                  },{
-                    button: ActionButton.PRIMARY,
-                    showFeedback: true,
-                    hoverText: "Punch" 
-                  }
-              )
-            )
-            this._startfight = true;
-          }
+        //if(this._npc.battle){
+          
           if (!this.dead && !this._clicked) {
             //log('in the block not dead and not clicked')
             if(!this._npc.hasComponent(SecondaryTimeOut) && this._npc.getComponent(OnPointerDown).showFeedback === false) {
@@ -99,6 +99,7 @@ export class OrcBattle {
               //this._fight.play()
               soundbox3.play()
               this._player.damage(1)
+              //log('player hp ', this._player.hp)
               if(this._player.hp == 0) {
                 //soundbox2.play()
                 this._fight.stop()
@@ -128,12 +129,15 @@ export class OrcBattle {
               soundbox4.play()
               this._npc.takedamage(1)
               this._clicked = false;
+              //log('npc health ', this._npc.hp)
 
               if(this._npc.hp == 0) {
                 this.dead = true;
                 this._npc.battle = false;
                 this._fight.stop()
                 this._kick.stop()
+                this._hit.stop()
+                this._hit2.stop()
 
                 if(Math.round(Math.random() * 1)){
                     this._death.play()
@@ -149,36 +153,67 @@ export class OrcBattle {
               this._npc.addComponentOrReplace(new SecondaryTimeOut(this._punchpause));
             }
           }  
-        } else {
-          this._walk.playing = false;
-          this._turn.playing = false;
-          this._fight.playing = false;
-          this._kick.playing = false;
-          this._idle.playing = false;
-          this._npc.addComponentOrReplace(new TimeOut(this._battlepause));  
-        } 
-      } else if (dist < 16 && dist > 8) {
-        this._fight.stop()
-        this._kick.stop()
-        this._hit.stop()
-        this._hit2.stop()
-        //this._walk.stop() 
-        let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
-        transform.lookAt(playerPos);
-        this._walk.play()
-          //this._turn.play();
-          //this._npc.addComponent(new TimeOut(this._turntime));
+        //} 
+        // else {
+        //   this._walk.playing = false;
+        //   this._turn.playing = false;
+        //   this._fight.playing = false;
+        //   this._kick.playing = false;
+        //   this._idle.playing = false;
+        //   this._npc.addComponentOrReplace(new TimeOut(this._battlepause));  
+        // } 
+      } else if (dist < 20 && dist > 8) {
+        //log('less than 20, more than 8')
+        if(!this.dead) {
+            let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
+            this._npc.addComponentOrReplace(new DerpData([this._startPos,playerPos]))
+    
+            let transform = this._npc.getComponent(Transform);
+            transform.lookAt(playerPos);
+    
+            let path = this._npc.getComponent(DerpData);
+    
+            this._walk.playing = true;
+            this._turn.playing = false;
+            this._fight.playing = false;
+            this._kick.playing = false;
+            this._hit.playing = false;
+            this._hit2.playing = false;
+            this._idle.playing = false;
+    
+            if (path.fraction < 1) {
+            //   log('path.fraction is less than 1 ', path.fraction)
+            //   log('dt ', dt)
+            //   log('dt/12 ', dt/12)
+            //   path.fraction += dt / 12;
+            //   log('path.fraction after addition ', path.fraction)
+            //log('path array origin ', path.array[path.origin])
+            //log('path array target ', path.array[path.target])
+    
+              transform.position = Vector3.Lerp(
+                path.array[path.origin],
+                path.array[path.target],
+                //path.fraction
+                0.5
+              );
+            }
+        }
+
+        
+        
       } else {
-          this._fight.stop()
-          this._hit.stop()
-          this._walk.stop()
-          this._npc.addComponentOrReplace(
-            new Transform({
-              position: this._startPos,
-              rotation: Quaternion.Euler(0, -90, 0)
-            })
-          );
-          this._idle.play()
+          if(!this.dead) {
+            this._fight.stop()
+            this._hit.stop()
+            this._walk.stop()
+            this._npc.addComponentOrReplace(
+              new Transform({
+                position: this._startPos,
+                rotation: Quaternion.Euler(0, -90, 0)
+              })
+            );
+            this._idle.play()
+          }
       }
     }
   }
