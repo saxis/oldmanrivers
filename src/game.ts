@@ -8,6 +8,9 @@ import { Walk } from "./gameObjects/riversWalk";
 import { Battle } from "./gameObjects/battle";
 import { Player } from "./gameObjects/player";
 import { HpCounter } from "./gameObjects/hpCounter";
+import { Orc } from "./gameObjects/orc";
+import { OrcBattle } from "./gameObjects/orcbattle";
+//import { BuilderHUD } from "./modules/BuilderHUD";
 
 new BaseScene();
 
@@ -96,11 +99,54 @@ dialog.playerWon = () => {
   );
 }
 
+const orcgrunt1 = new Orc(
+  resources.sounds.peasantunlock,
+  resources.models.orcgrunt,
+  20,
+  new Vector3(10, 0, -10),
+  Quaternion.Euler(0, -90, 0),
+  gameCanvas
+)
+orcgrunt1.addComponent(
+  new OnPointerDown(
+    e => {
+      orcgrunt1.battle = true
+      rect.visible = true;
+    },
+    {
+      button: ActionButton.PRIMARY,
+      hoverText: "Attack",
+      showFeedback:true
+    }
+  )
+);
+
+// const orcgrunt2 = new Npc(
+//   resources.sounds.peasantunlock,
+//   resources.models.orcgrunt,
+//   20,
+//   new Vector3(9, 0, -8),
+//   Quaternion.Euler(180, -20, 180),
+//   gameCanvas
+// )
+
+// const orcgrunt3 = new Npc(
+//   resources.sounds.peasantunlock,
+//   resources.models.orcgrunt,
+//   20,
+//   new Vector3(7, 0, -9),
+//   Quaternion.Euler(-180, 60, -180),
+//   gameCanvas
+// )
+
+
+
 const oldmanrivers = new Npc(
   resources.sounds.peasantunlock,
   resources.models.paladin,
   20,
   new Vector3(12, 0, 5),
+  Quaternion.Euler(0, 0, 0),
   gameCanvas
 );
 oldmanrivers.addComponent(
@@ -124,6 +170,7 @@ oldmanrivers.addComponentOrReplace(new DerpData([new Vector3(12, 0, 5),new Vecto
 engine.addSystem(new Walk(oldmanrivers, TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.turnLClip));
 engine.addSystem(new WaitSystem());
 engine.addSystem(new Battle(player,oldmanrivers,TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.talkingClip, oldmanrivers.turnLClip, oldmanrivers.boxing, oldmanrivers.hit, oldmanrivers.death, clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(player,orcgrunt1, new Vector3(10, 0, -10), orcgrunt1.walk, orcgrunt1.turnAround, orcgrunt1.boxing, orcgrunt1.hit1, orcgrunt1.death1, clicked, PUNCH_TIME, dialog))
 
 oldmanrivers.riversWalkClip.play()
 
@@ -143,3 +190,6 @@ export function secondRound() {
     )
   );
 }
+
+//const hud: BuilderHUD = new BuilderHUD();
+//hud.attachToEntity(orcgrunt2)

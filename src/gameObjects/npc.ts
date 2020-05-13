@@ -18,6 +18,7 @@ export class Npc extends Entity {
     model: GLTFShape,
     startingHp: number,
     start: Vector3,
+    rotation: Quaternion,
     canvas
   ) {
     super();
@@ -26,6 +27,7 @@ export class Npc extends Entity {
     this.addComponent(
       new Transform({
         position: start,
+        rotation: rotation
       })
     );
     this.addComponent(new AudioSource(sound));

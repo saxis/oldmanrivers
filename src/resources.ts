@@ -28,12 +28,13 @@ export default {
         lantern: new GLTFShape("models/lantern_glb.glb"),
         grassblades: new GLTFShape("models/grass_glb.glb"),
         brute: new GLTFShape("models/BruteAnimated6.glb"),
+        orcgrunt: new GLTFShape("models/orcgrunt6.glb"),
         peasant: new GLTFShape("models/peasant.glb"),
         paladin: new GLTFShape("models/paladin8.glb"),
         orc_camp: new GLTFShape("models/orc_encampment_model.glb"),
         smoke1: new GLTFShape("models/smoke_animated_01.glb"),
         smoke2: new GLTFShape("models/smoke_animated_02.glb"),
-        flag: new GLTFShape("models/flag_animated_model.glb")
+        flag: new GLTFShape("models/flag_animated_model.glb"),
     },
     textures: {
         textContainer: new Texture("src/images/dialogs/textContainer.png"),
