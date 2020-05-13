@@ -95,6 +95,10 @@ export class Npc extends Entity {
     this.healthBar.visible = true;
   }
 
+  hidehpbar() {
+    this.healthBar.visible = false;
+  }
+
   heal(amount: number) {
     this.hp += amount;
     this.healthBar.value  =  ((this.hp/this._startinghp)*100).toFixed(0).toString() + '%';

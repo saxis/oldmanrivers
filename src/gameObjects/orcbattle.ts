@@ -6,10 +6,12 @@ import resources from "../resources";
 import { Player } from "./player";
 import { PeasantDialog, SecondDialog } from "../ui/index";
 import { Orc } from "./orc";
+import { HpCounter } from "./hpCounter";
 
 const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
 const soundbox4 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.playerHit)
+
 
 export class OrcBattle {
     private _player: Player;
@@ -32,10 +34,11 @@ export class OrcBattle {
     private _dialog: PeasantDialog;
     private _punchpause: number = 2
     private _pacified: boolean = false;
+    private _orcGruntHpBar: HpCounter;
 
     public endFight: () => void;
 
-    constructor(player: Player, npc: Orc, startPos:Vector3,  walk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
+    constructor(canvas, player: Player, npc: Orc, startPos:Vector3,  walk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
         this._player = player;
         this._npc = npc;
         this._startPos = startPos;
@@ -51,6 +54,8 @@ export class OrcBattle {
         this._clicked = clicked;
         this._battlepause = battlepause;
         this._dialog = dialog
+        this._orcGruntHpBar = new HpCounter(canvas,resources.textures.orcGruntHpBar,'npc')
+        this._npc.resethealthbar(canvas)
 
         this._npc.addComponentOrReplace(
             new OnPointerDown(
@@ -58,7 +63,7 @@ export class OrcBattle {
                  this._npc.getComponent(OnPointerDown).showFeedback = false;
                  if(!this._npc.hasComponent(SecondaryTimeOut)) {
                    this._clicked = true;
-                   log('this._clicked ', this._clicked)
+                   //log('this._clicked ', this._clicked)
                  }
                },{
                  button: ActionButton.PRIMARY,
@@ -129,7 +134,6 @@ export class OrcBattle {
               soundbox4.play()
               this._npc.takedamage(1)
               this._clicked = false;
-              //log('npc health ', this._npc.hp)
 
               if(this._npc.hp == 0) {
                 this.dead = true;
@@ -139,32 +143,32 @@ export class OrcBattle {
                 this._hit.stop()
                 this._hit2.stop()
 
-                if(Math.round(Math.random() * 1)){
-                    this._death.play()
-                    this._death.looping = false;
-                  } else {
-                    this._death2.play()
-                    this._death2.looping = false;
-                  }
-                
+                this._death.play()
+                this._death.looping = false;
 
+                if(Math.round(Math.random() * 1)){
+                  this._death.play()
+                  this._death.looping = false;
+                } else {
+                  this._death2.play()
+                  this._death2.looping = false;
+                }
+
+                this._orcGruntHpBar.hide()
+                this._npc.hidehpbar()
                 this._dialog.playerWon()
               }
               this._npc.addComponentOrReplace(new SecondaryTimeOut(this._punchpause));
             }
           }  
-        //} 
-        // else {
-        //   this._walk.playing = false;
-        //   this._turn.playing = false;
-        //   this._fight.playing = false;
-        //   this._kick.playing = false;
-        //   this._idle.playing = false;
-        //   this._npc.addComponentOrReplace(new TimeOut(this._battlepause));  
-        // } 
+       
       } else if (dist < 20 && dist > 8) {
+        
         //log('less than 20, more than 8')
         if(!this.dead) {
+            this._orcGruntHpBar.show()
+            this._npc.showhpbar()
+            
             let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
             this._npc.addComponentOrReplace(new DerpData([this._startPos,playerPos]))
     
@@ -180,13 +184,23 @@ export class OrcBattle {
             this._hit.playing = false;
             this._hit2.playing = false;
             this._idle.playing = false;
+
+            // transform.position = Vector3.Lerp(
+            //   this._startPos,
+            //   playerPos,
+            //   .2
+            // )
     
             if (path.fraction < 1) {
+              // let separator = 0
+              // separator = separator + 0.2
+              // log('separator ', separator)
             //   log('path.fraction is less than 1 ', path.fraction)
             //   log('dt ', dt)
             //   log('dt/12 ', dt/12)
-            //   path.fraction += dt / 12;
-            //   log('path.fraction after addition ', path.fraction)
+               //path.fraction += dt / 12
+              //  path.fraction += 0.2
+              //  log('path.fraction after addition ', path.fraction)
             //log('path array origin ', path.array[path.origin])
             //log('path array target ', path.array[path.target])
     
@@ -203,6 +217,9 @@ export class OrcBattle {
         
       } else {
           if(!this.dead) {
+            this._orcGruntHpBar.hide()
+            this._npc.hidehpbar()
+
             this._fight.stop()
             this._hit.stop()
             this._walk.stop()

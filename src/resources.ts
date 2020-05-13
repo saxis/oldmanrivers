@@ -43,6 +43,7 @@ export default {
         grayContainer: new Texture("src/images/dialogs/graybox.png"),
         playContainer: new Texture("src/images/UI-atlas.png"),
         hpCounter: new Texture("src/images/OldManDialog2.png"),
+        orcGruntHpBar: new Texture("src/images/OrcGruntHPBar.png"),
         playerCounter: new Texture("src/images/player.png")
       }
 }

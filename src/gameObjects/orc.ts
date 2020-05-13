@@ -74,6 +74,25 @@ export class Orc extends Entity {
     public playAudio() {
       this.getComponent(AudioSource).playOnce();
     }
+
+    resethealthbar(canvas) {
+        this.healthBar = new UIText(canvas)
+        this.healthBar.hAlign = "left";
+        this.healthBar.vAlign = "center";
+        this.healthBar.hTextAlign = "left";
+        this.healthBar.vTextAlign = "center";
+        this.healthBar.width = "100%";
+        this.healthBar.height = "100%";
+        this.healthBar.value = ((this._startinghp/this._startinghp)*100).toString() + '%';
+        this.healthBar.positionY = 180;
+        this.healthBar.positionX = 100;
+        this.healthBar.fontSize = 14;
+        this.healthBar.outlineWidth = 0.4;
+        this.healthBar.textWrapping = true;
+        this.healthBar.fontWeight = "bold";
+        this.healthBar.isPointerBlocker = false;
+        this.healthBar.visible = false; 
+    }
   
     get battle() {
       return this._battle;
@@ -96,6 +115,10 @@ export class Orc extends Entity {
     showhpbar() {
       this.healthBar.visible = true;
     }
+
+    hidehpbar() {
+      this.healthBar.visible = false;
+    }
   
     heal(amount: number) {
       this.hp += amount;
@@ -105,6 +128,7 @@ export class Orc extends Entity {
     takedamage(amount: number) {
       this.hp -= amount;
       this.healthBar.value  = ((this.hp/this._startinghp)*100).toFixed(0).toString() + '%';
+      log('orc healthbar value should be showing: ', this.healthBar.value)
     }
   }
   
