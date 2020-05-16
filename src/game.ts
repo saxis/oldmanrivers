@@ -112,23 +112,23 @@ const orcgrunt1 = new Orc(
   gameCanvas
 )
 
-// const orcgrunt2 = new Npc(
-//   resources.sounds.peasantunlock,
-//   resources.models.orcgrunt,
-//   20,
-//   new Vector3(9, 0, -8),
-//   Quaternion.Euler(180, -20, 180),
-//   gameCanvas
-// )
+const orcgrunt2 = new Orc(
+  resources.sounds.peasantunlock,
+  resources.models.orcgrunt,
+  20,
+  new Vector3(9, 0, -8),
+  Quaternion.Euler(180, -20, 180),
+  gameCanvas
+)
 
-// const orcgrunt3 = new Npc(
-//   resources.sounds.peasantunlock,
-//   resources.models.orcgrunt,
-//   20,
-//   new Vector3(7, 0, -9),
-//   Quaternion.Euler(-180, 60, -180),
-//   gameCanvas
-// )
+const orcgrunt3 = new Orc(
+  resources.sounds.peasantunlock,
+  resources.models.orcgrunt,
+  20,
+  new Vector3(7, 0, -9),
+  Quaternion.Euler(-180, 60, -180),
+  gameCanvas
+)
 
 
 
@@ -160,8 +160,10 @@ oldmanrivers.addComponent(
 oldmanrivers.addComponentOrReplace(new DerpData([new Vector3(12, 0, 5),new Vector3(13, 0, 14),new Vector3(3, 0, 14), new Vector3(2, 0, 3)]))
 engine.addSystem(new Walk(oldmanrivers, TURN_TIME));
 engine.addSystem(new WaitSystem());
-engine.addSystem(new Battle(player,oldmanrivers,TURN_TIME, clicked, PUNCH_TIME, dialog))
+engine.addSystem(new Battle(gameCanvas, player,oldmanrivers,TURN_TIME, clicked, PUNCH_TIME, dialog))
 engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt1, new Vector3(10, 0, -10), clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt2, new Vector3(9, 0, -8), clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt3, new Vector3(7, 0, -9), clicked, PUNCH_TIME, dialog))
 
 oldmanrivers.walking.play()
 

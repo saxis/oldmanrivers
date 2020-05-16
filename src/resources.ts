@@ -14,7 +14,9 @@ export default {
         button: new AudioClip("sounds/button.mp3"),
         evillaugh: new AudioClip("sounds/crazyChickLaugh.mp3"),
         birdsong: new AudioClip("sounds/Bird-song.mp3"),
-        hailtraveler: new AudioClip("sounds/HailTraveler.mp3")
+        hailtraveler: new AudioClip("sounds/HailTraveler.mp3"),
+        killping: new AudioClip("sounds/killping.mp3"),
+        orclaugh: new AudioClip("sounds/orclaugh.mp3")
     },
     animations: {
         riversWalkClip: new AnimationState("walking"),

@@ -12,6 +12,7 @@ export class Orc extends Entity {
     public death1: AnimationState;
     public death2: AnimationState;
     private healthBar: UIText;
+    private npcName: UIText;
   
     constructor(
       sound: AudioClip,
@@ -92,6 +93,23 @@ export class Orc extends Entity {
         this.healthBar.fontWeight = "bold";
         this.healthBar.isPointerBlocker = false;
         this.healthBar.visible = false; 
+
+        this.npcName = new UIText(canvas)
+        this.npcName.vAlign = "center";
+        this.npcName.hTextAlign = "left";
+        this.npcName.vTextAlign = "center";
+        this.npcName.width = "100%";
+        this.npcName.height = "100%";
+        this.npcName.value = 'Orc Grunt'
+        this.npcName.positionY = 195;
+        this.npcName.positionX = 95;
+        this.npcName.fontSize = 10;
+        this.npcName.outlineWidth = 0.4;
+        this.npcName.textWrapping = true;
+        this.npcName.fontWeight = "bold";
+        this.npcName.isPointerBlocker = false;
+        this.npcName.visible = false; 
+
     }
   
     get battle() {
@@ -114,10 +132,12 @@ export class Orc extends Entity {
   
     showhpbar() {
       this.healthBar.visible = true;
+      this.npcName.visible = true;
     }
 
     hidehpbar() {
       this.healthBar.visible = false;
+      this.npcName.visible = false;
     }
   
     heal(amount: number) {

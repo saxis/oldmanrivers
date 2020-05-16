@@ -10,6 +10,7 @@ import { PeasantDialog, SecondDialog } from "../ui/index";
 const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
 const soundbox4 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.playerHit)
+const killbox = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.killping)
 
 export class Battle {
     private _player: Player;
@@ -30,7 +31,7 @@ export class Battle {
 
     public endFight: () => void;
 
-    constructor(player: Player, npc: Npc, turntime: number, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
+    constructor(canvas, player: Player, npc: Npc, turntime: number, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
         this._player = player;
         this._npc = npc;
         this._walk = this._npc.walking;
@@ -42,6 +43,7 @@ export class Battle {
         this._clicked = clicked;
         this._battlepause = battlepause;
         this._dialog = dialog
+        this._npc.resethealthbar(canvas)
     }
 
     update() {
@@ -106,6 +108,7 @@ export class Battle {
               this._npc.takedamage(1)
               this._clicked = false;
               if(this._npc.hp == 0) {
+                killbox.play()
                 this.dead = true;
                 this._npc.battle = false;
                 this._fight.stop()

@@ -11,6 +11,8 @@ import { HpCounter } from "./hpCounter";
 //const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
 const soundbox4 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.playerHit)
+const killbox = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.killping)
+const orclaugh = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.orclaugh)
 
 
 export class OrcBattle {
@@ -106,12 +108,18 @@ export class OrcBattle {
               this._player.damage(1)
               //log('player hp ', this._player.hp)
               if(this._player.hp == 0) {
-                //soundbox2.play()
+                orclaugh.play()
                 this._fight.stop()
                 this._kick.stop()
                 this.dead = true;
                 this._npc.battle = false;
-                this._dialog.npcWon()
+                this._npc.addComponentOrReplace(
+                  new Transform({
+                    position: this._startPos,
+                    rotation: Quaternion.Euler(0, -90, 0)
+                  })
+                );
+                this._idle.play()
               }
               this._npc.addComponentOrReplace(new TimeOut(this._battlepause)); 
             } 
@@ -145,6 +153,8 @@ export class OrcBattle {
 
                 this._death.play()
                 this._death.looping = false;
+
+                killbox.play()
 
                 if(Math.round(Math.random() * 1)){
                   this._death.play()

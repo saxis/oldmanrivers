@@ -12,6 +12,7 @@ export class Npc extends Entity {
   public boxing: AnimationState;
   public salute: AnimationState;
   private healthBar: UIText;
+  private npcName: UIText;
 
   constructor(
     sound: AudioClip,
@@ -93,12 +94,50 @@ export class Npc extends Entity {
     }
   }
 
+  resethealthbar(canvas) {
+    this.healthBar = new UIText(canvas)
+    this.healthBar.hAlign = "left";
+    this.healthBar.vAlign = "center";
+    this.healthBar.hTextAlign = "left";
+    this.healthBar.vTextAlign = "center";
+    this.healthBar.width = "100%";
+    this.healthBar.height = "100%";
+    this.healthBar.value = ((this._startinghp/this._startinghp)*100).toString() + '%';
+    this.healthBar.positionY = 180;
+    this.healthBar.positionX = 100;
+    this.healthBar.fontSize = 14;
+    this.healthBar.outlineWidth = 0.4;
+    this.healthBar.textWrapping = true;
+    this.healthBar.fontWeight = "bold";
+    this.healthBar.isPointerBlocker = false;
+    this.healthBar.visible = false; 
+
+    this.npcName = new UIText(canvas)
+    this.npcName.vAlign = "center";
+    this.npcName.hTextAlign = "left";
+    this.npcName.vTextAlign = "center";
+    this.npcName.width = "100%";
+    this.npcName.height = "100%";
+    this.npcName.value = 'Old Man Rivers'
+    this.npcName.positionY = 195;
+    this.npcName.positionX = 95;
+    this.npcName.fontSize = 10;
+    this.npcName.outlineWidth = 0.4;
+    this.npcName.textWrapping = true;
+    this.npcName.fontWeight = "bold";
+    this.npcName.isPointerBlocker = false;
+    this.npcName.visible = false; 
+
+}
+
   showhpbar() {
     this.healthBar.visible = true;
+    this.npcName.visible = true;
   }
 
   hidehpbar() {
     this.healthBar.visible = false;
+    this.npcName.visible = false;
   }
 
   heal(amount: number) {
