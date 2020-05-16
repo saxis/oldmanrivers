@@ -41,7 +41,7 @@ player.showhpbar();
 
 const seconddialog = new SecondDialog(gameCanvas);
 seconddialog.onSecondDialogStarted = () => {
-  oldmanrivers.talkingClip.play();
+  oldmanrivers.talk.play();
   oldmanrivers.getComponent(OnPointerDown).showFeedback = false;
 }
 seconddialog.onSecondDialogEnded = () => oldmanrivers.getComponent(OnPointerDown).showFeedback = true 
@@ -158,12 +158,12 @@ oldmanrivers.addComponent(
 );
 
 oldmanrivers.addComponentOrReplace(new DerpData([new Vector3(12, 0, 5),new Vector3(13, 0, 14),new Vector3(3, 0, 14), new Vector3(2, 0, 3)]))
-engine.addSystem(new Walk(oldmanrivers, TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.turnLClip));
+engine.addSystem(new Walk(oldmanrivers, TURN_TIME));
 engine.addSystem(new WaitSystem());
-engine.addSystem(new Battle(player,oldmanrivers,TURN_TIME, oldmanrivers.riversWalkClip, oldmanrivers.talkingClip, oldmanrivers.turnLClip, oldmanrivers.boxing, oldmanrivers.hit, oldmanrivers.death, clicked, PUNCH_TIME, dialog))
-engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt1, new Vector3(10, 0, -10), orcgrunt1.walk, orcgrunt1.turnAround, orcgrunt1.boxing, orcgrunt1.hit1, orcgrunt1.death1, clicked, PUNCH_TIME, dialog))
+engine.addSystem(new Battle(player,oldmanrivers,TURN_TIME, clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt1, new Vector3(10, 0, -10), clicked, PUNCH_TIME, dialog))
 
-oldmanrivers.riversWalkClip.play()
+oldmanrivers.walking.play()
 
 export function secondRound() {
   log('in secondRound')

@@ -8,7 +8,7 @@ import { PeasantDialog, SecondDialog } from "../ui/index";
 import { Orc } from "./orc";
 import { HpCounter } from "./hpCounter";
 
-const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
+//const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
 const soundbox4 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.playerHit)
 
@@ -38,16 +38,16 @@ export class OrcBattle {
 
     public endFight: () => void;
 
-    constructor(canvas, player: Player, npc: Orc, startPos:Vector3,  walk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
+    constructor(canvas, player: Player, npc: Orc, startPos:Vector3,clicked:boolean, battlepause:number, dialog:PeasantDialog) {
         this._player = player;
         this._npc = npc;
         this._startPos = startPos;
-        this._walk = walk;
-        this._turn = turn;
-        this._fight = fight;
+        this._walk = this._npc.walk;
+        this._turn = this._npc.turnAround;
+        this._fight = this._npc.boxing;
         this._kick = this._npc.kick
         this._idle = this._npc.idle
-        this._hit = hit;
+        this._hit = this._npc.hit1;
         this._hit2 = this._npc.hit2
         this._death = this._npc.death1
         this._death2 = this._npc.death2

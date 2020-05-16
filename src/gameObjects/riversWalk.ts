@@ -9,11 +9,11 @@ export class Walk {
     private _walk: AnimationState;
     private _turn: AnimationState;
 
-    constructor(npc: Npc, turntime: number, walk:AnimationState, turn:AnimationState) {
+    constructor(npc: Npc, turntime: number) {
         this._npc = npc;
         this._turntime = turntime;
-        this._walk = walk;
-        this._turn = turn;
+        this._walk = this._npc.walking;
+        this._turn = this._npc.turnLeft;
     }
 
     update(dt: number) {

@@ -2,15 +2,15 @@ export class Npc extends Entity {
   private _hp: number;
   private _battle: boolean = false;
   private _startinghp:number;
-  //private _walkClip: AnimationState
-  public riversWalkClip: AnimationState;
-  public turnRClip: AnimationState;
-  public turnLClip: AnimationState;
-  public talkingClip: AnimationState;
+  public walking: AnimationState;
+  public talk: AnimationState;
   public fightIdle: AnimationState;
-  public boxing: AnimationState;
-  public hit: AnimationState;
+  public hitInHead: AnimationState;
   public death: AnimationState;
+  public turnLeft: AnimationState;
+  public rightTurn: AnimationState;
+  public boxing: AnimationState;
+  public salute: AnimationState;
   private healthBar: UIText;
 
   constructor(
@@ -35,22 +35,24 @@ export class Npc extends Entity {
     this._startinghp = startingHp;
     let npcAnimator = new Animator();
     this.addComponent(npcAnimator);
-    this.riversWalkClip = new AnimationState("walking");
-    npcAnimator.addClip(this.riversWalkClip);
-    this.turnRClip = new AnimationState("rightTurn");
-    npcAnimator.addClip(this.turnRClip);
-    this.turnLClip = new AnimationState("turnLeft");
-    npcAnimator.addClip(this.turnLClip);
-    this.talkingClip = new AnimationState("talk");
-    npcAnimator.addClip(this.talkingClip);
-    this.fightIdle = new AnimationState("fightIdle");
-    npcAnimator.addClip(this.fightIdle);
-    this.boxing = new AnimationState("boxing");
-    npcAnimator.addClip(this.boxing);
-    this.hit = new AnimationState("hitInHead");
-    npcAnimator.addClip(this.hit);
-    this.death = new AnimationState("death");
-    npcAnimator.addClip(this.death);
+    this.walking = new AnimationState("walking")
+    npcAnimator.addClip(this.walking)
+    this.talk = new AnimationState("talk")
+    npcAnimator.addClip(this.talk)
+    this.fightIdle = new AnimationState("fightIdle")
+    npcAnimator.addClip(this.fightIdle)
+    this.hitInHead = new AnimationState("hitInHead");
+    npcAnimator.addClip(this.hitInHead);
+    this.death = new AnimationState("death")
+    npcAnimator.addClip(this.death)
+    this.turnLeft = new AnimationState("turnLeft")
+    npcAnimator.addClip(this.turnLeft)
+    this.rightTurn = new AnimationState("rightTurn")
+    npcAnimator.addClip(this.rightTurn)
+    this.boxing = new AnimationState("boxing")
+    npcAnimator.addClip(this.boxing)
+    this.salute = new AnimationState("salute")
+    npcAnimator.addClip(this.salute)
     this.healthBar = new UIText(canvas)
     this.healthBar.hAlign = "left";
     this.healthBar.vAlign = "center";

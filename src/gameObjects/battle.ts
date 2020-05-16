@@ -30,15 +30,15 @@ export class Battle {
 
     public endFight: () => void;
 
-    constructor(player: Player, npc: Npc, turntime: number, walk:AnimationState, talk:AnimationState, turn:AnimationState, fight:AnimationState, hit:AnimationState,death:AnimationState, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
+    constructor(player: Player, npc: Npc, turntime: number, clicked:boolean, battlepause:number, dialog:PeasantDialog) {
         this._player = player;
         this._npc = npc;
-        this._walk = walk;
-        this._talk = talk;
-        this._turn = turn;
-        this._fight = fight;
-        this._hit = hit;
-        this._death = death
+        this._walk = this._npc.walking;
+        this._talk = this._npc.talk;
+        this._turn = this._npc.turnLeft;
+        this._fight = this._npc.boxing;
+        this._hit = this._npc.hitInHead;
+        this._death = this._npc.death;
         this._clicked = clicked;
         this._battlepause = battlepause;
         this._dialog = dialog
