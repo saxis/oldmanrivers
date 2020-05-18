@@ -10,7 +10,6 @@ import { Player } from "./gameObjects/player";
 import { HpCounter } from "./gameObjects/hpCounter";
 import { Orc } from "./gameObjects/orc";
 import { OrcBattle } from "./gameObjects/orcbattle";
-//import { BuilderHUD } from "./modules/BuilderHUD";
 
 new BaseScene();
 
@@ -34,7 +33,6 @@ rect.hAlign = "right"
 rect.positionY = 180;
 rect.color = Color4.Gray();
 rect.opacity = 0.7
-//rect.visible = false;
 
 rect.visible = true;
 player.showhpbar();
@@ -69,8 +67,6 @@ dialog.onSequenceComplete = () => {
 }
 dialog.onPoorChoiceMade = () => {
   oldmanrivers.battle = true;
-  // oldmanrivers.showhpbar();
-  // player.showhpbar();
 }
 
 dialog.npcWon = () => {
@@ -115,7 +111,7 @@ const orcgrunt1 = new Orc(
 const orcgrunt2 = new Orc(
   resources.sounds.peasantunlock,
   resources.models.orcgrunt,
-  20,
+  7,
   new Vector3(9, 0, -8),
   Quaternion.Euler(180, -20, 180),
   gameCanvas
@@ -124,7 +120,7 @@ const orcgrunt2 = new Orc(
 const orcgrunt3 = new Orc(
   resources.sounds.peasantunlock,
   resources.models.orcgrunt,
-  20,
+  7,
   new Vector3(7, 0, -9),
   Quaternion.Euler(-180, 60, -180),
   gameCanvas
@@ -161,9 +157,9 @@ oldmanrivers.addComponentOrReplace(new DerpData([new Vector3(12, 0, 5),new Vecto
 engine.addSystem(new Walk(oldmanrivers, TURN_TIME));
 engine.addSystem(new WaitSystem());
 engine.addSystem(new Battle(gameCanvas, player,oldmanrivers,TURN_TIME, clicked, PUNCH_TIME, dialog))
-engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt1, new Vector3(10, 0, -10), clicked, PUNCH_TIME, dialog))
-engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt2, new Vector3(9, 0, -8), clicked, PUNCH_TIME, dialog))
-engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt3, new Vector3(7, 0, -9), clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt1, new Vector3(10, 0, -10), Quaternion.Euler(0, -90, 0), clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt2, new Vector3(9, 0, -8),Quaternion.Euler(180, -20, 180), clicked, PUNCH_TIME, dialog))
+engine.addSystem(new OrcBattle(gameCanvas,player,orcgrunt3, new Vector3(7, 0, -9),Quaternion.Euler(-180, 60, -180), clicked, PUNCH_TIME, dialog))
 
 oldmanrivers.walking.play()
 
@@ -183,6 +179,3 @@ export function secondRound() {
     )
   );
 }
-
-//const hud: BuilderHUD = new BuilderHUD();
-//hud.attachToEntity(orcgrunt2)

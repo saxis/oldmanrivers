@@ -7,6 +7,8 @@ import { Player } from "./player";
 import { PeasantDialog, SecondDialog } from "../ui/index";
 import { Orc } from "./orc";
 import { HpCounter } from "./hpCounter";
+import { LootWindow } from "./lootWindow";
+import { SpawnTimeOut } from "../components/spawnTimer";
 
 //const soundbox2 = new SoundBox(new Transform({position: new Vector3(7,0,8)}), resources.sounds.evillaugh)
 const soundbox3 = new SoundBox(new Transform({position: new Vector3(7, 0, 8) }), resources.sounds.playerHit2)
@@ -19,6 +21,7 @@ export class OrcBattle {
     private _player: Player;
     private _npc: Orc;
     private _startPos: Vector3;
+    private _startRot: Quaternion;
     //private _turntime: number;
     private _walk: AnimationState;
     private _turn: AnimationState;
@@ -32,18 +35,21 @@ export class OrcBattle {
     private _clicked = false;
     private _battlepause: number;
     private dead = false;
-    private _startfight: boolean = false;
+    //private _startfight: boolean = false;
     private _dialog: PeasantDialog;
     private _punchpause: number = 2
-    private _pacified: boolean = false;
+    //private _pacified: boolean = false;
     private _orcGruntHpBar: HpCounter;
+    private _lootWindow: LootWindow;
+    private canvas;
 
     public endFight: () => void;
 
-    constructor(canvas, player: Player, npc: Orc, startPos:Vector3,clicked:boolean, battlepause:number, dialog:PeasantDialog) {
+    constructor(canvas, player: Player, npc: Orc, startPos:Vector3,startRot: Quaternion,clicked:boolean, battlepause:number, dialog:PeasantDialog) {
         this._player = player;
         this._npc = npc;
         this._startPos = startPos;
+        this._startRot = startRot
         this._walk = this._npc.walk;
         this._turn = this._npc.turnAround;
         this._fight = this._npc.boxing;
@@ -55,8 +61,9 @@ export class OrcBattle {
         this._death2 = this._npc.death2
         this._clicked = clicked;
         this._battlepause = battlepause;
-        this._dialog = dialog
+        //this._dialog = dialog
         this._orcGruntHpBar = new HpCounter(canvas,resources.textures.orcGruntHpBar,'npc')
+        this._lootWindow = new LootWindow(canvas, resources.textures.lootWindow)
         this._npc.resethealthbar(canvas)
 
         this._npc.addComponentOrReplace(
@@ -65,7 +72,6 @@ export class OrcBattle {
                  this._npc.getComponent(OnPointerDown).showFeedback = false;
                  if(!this._npc.hasComponent(SecondaryTimeOut)) {
                    this._clicked = true;
-                   //log('this._clicked ', this._clicked)
                  }
                },{
                  button: ActionButton.PRIMARY,
@@ -83,7 +89,6 @@ export class OrcBattle {
       if (dist < 8) {
         let playerPos = new Vector3(camera.position.x, 0, camera.position.z);
         transform.lookAt(playerPos);
-        //if(this._npc.battle){
           
           if (!this.dead && !this._clicked) {
             //log('in the block not dead and not clicked')
@@ -116,7 +121,7 @@ export class OrcBattle {
                 this._npc.addComponentOrReplace(
                   new Transform({
                     position: this._startPos,
-                    rotation: Quaternion.Euler(0, -90, 0)
+                    rotation: this._startRot
                   })
                 );
                 this._idle.play()
@@ -144,6 +149,34 @@ export class OrcBattle {
               this._clicked = false;
 
               if(this._npc.hp == 0) {
+                this._npc.addComponentOrReplace(new SpawnTimeOut(90)); 
+                this._npc.addComponentOrReplace(
+                  new OnPointerDown(
+                     e => {
+                      this._lootWindow.show()
+                      this._npc.loadloot()
+                      let close = new UIImage(this.canvas, resources.textures.closeicon)
+                      close.name = "clickable-image"
+                      close.width = "30px"
+                      close.height = "30px"
+                      close.sourceWidth = 512
+                      close.sourceHeight = 512
+                      close.vAlign = "center"
+                      close.positionY = 250;
+                      close.positionX = 60;
+                      close.isPointerBlocker = true
+                      close.onClick = new OnClick(() => {
+                        this._lootWindow.hide()
+                        this._npc.hideloot()
+                        close.visible = false;
+                      })
+                     },{
+                       button: ActionButton.PRIMARY,
+                       showFeedback: true,
+                       hoverText: "Loot Corpse" 
+                     }
+                 )
+                )
                 this.dead = true;
                 this._npc.battle = false;
                 this._fight.stop()
@@ -166,7 +199,6 @@ export class OrcBattle {
 
                 this._orcGruntHpBar.hide()
                 this._npc.hidehpbar()
-                this._dialog.playerWon()
               }
               this._npc.addComponentOrReplace(new SecondaryTimeOut(this._punchpause));
             }
@@ -236,10 +268,29 @@ export class OrcBattle {
             this._npc.addComponentOrReplace(
               new Transform({
                 position: this._startPos,
-                rotation: Quaternion.Euler(0, -90, 0)
+                rotation: this._startRot
               })
             );
             this._idle.play()
+          } else if(!this._npc.hasComponent(SpawnTimeOut)) {
+            this._death.stop()
+            this.dead = false;
+            this._npc.resethealthbar(this.canvas)
+            this._npc.addComponentOrReplace(
+              new OnPointerDown(
+                 e => {
+                   this._npc.getComponent(OnPointerDown).showFeedback = false;
+                   if(!this._npc.hasComponent(SecondaryTimeOut)) {
+                     this._clicked = true;
+                     //log('this._clicked ', this._clicked)
+                   }
+                 },{
+                   button: ActionButton.PRIMARY,
+                   showFeedback: true,
+                   hoverText: "Punch" 
+                 }
+             )
+           )  
           }
       }
     }
